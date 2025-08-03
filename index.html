@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maui Itinerary 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .font-pacifico {
+            font-family: 'Pacifico', cursive;
+        }
+        .content-card {
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .content-card.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .day-btn.active {
+            background-color: #0077be;
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 119, 190, 0.3);
+        }
+        .day-btn {
+            transition: all 0.3s ease;
+        }
+        .packing-item label {
+            transition: all 0.3s ease;
+        }
+        .packing-item input:checked + label {
+            text-decoration: line-through;
+            color: #9ca3af;
+        }
+        .road-to-hana-car {
+            animation: drive 8s linear infinite;
+        }
+        @keyframes drive {
+            0% { transform: translateX(-150%); }
+            100% { transform: translateX(150%); }
+        }
+        .modal-overlay {
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .itinerary-item-clickable {
+            cursor: pointer;
+            transition: background-color: 0.2s ease;
+        }
+        .itinerary-item-clickable:hover {
+            background-color: #f9fafb;
+        }
+    </style>
+</head>
+<body class="bg-blue-50">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-6xl">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-5xl md:text-6xl font-pacifico text-cyan-700">Maui Adventure</h1>
+            <p class="text-lg text-gray-500 mt-2">October 8 - 15, 2025</p>
+            <p class="text-md text-gray-400 italic">"manifesting vibes, underestimating logistics"</p>
+        </header>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Navigation -->
+            <nav class="lg:w-1/4 flex flex-col space-y-2">
+                <h2 class="text-xl font-bold text-gray-700 mb-2 px-4">Navigation</h2>
+                <button onclick="showContent('day8')" class="day-btn text-left p-4 rounded-lg bg-white shadow-md hover:bg-cyan-100 active">
+                    <span class="font-bold">Oct 8</span> <span class="text-gray-600 text-sm">Arrival</span>
+                </button>
+                <button onclick="showContent('day9')" class="day-btn text-left p-4 rounded-lg bg-white shadow-md hover:bg-cyan-100">
+                     <span class="font-bold">Oct 9</span> <span class="text-gray-600 text-sm">Road to Hāna</span>
+                </button>
+                <button onclick="showContent('day10')" class="day-btn text-left p-4 rounded-lg bg-white shadow-md hover:bg-cyan-100">
+                     <span class="font-bold">Oct 10</span> <span class="text-gray-600 text-sm">'Īao & West Maui</span>
+                </button>
+                <button onclick="showContent('day11')" class="day-btn text-left p-4 rounded-lg bg-white shadow-md hover:bg-cyan-100">
+                     <span class="font-bold">Oct 11</span> <span class="text-gray-600 text-sm">Snorkel & Sunset</span>
+                </button>
+                <button onclick="showContent('day12')" class="day-btn text-left p-4 rounded-lg bg-white shadow-md hover:bg-cyan-100">
+                     <span class="font-bold">Oct 12</span> <span class="text-gray-600 text-sm">Kihei Chill Day</span>
+                </button>
+                 <button onclick="showContent('day13')" class="day-btn text-left p-4 rounded-lg bg-white shadow-md hover:bg-cyan-100">
+                     <span class="font-bold">Oct 13</span> <span class="text-gray-600 text-sm">Upcountry</span>
+                </button>
+                <button onclick="showContent('day14')" class="day-btn text-left p-4 rounded-lg bg-white shadow-md hover:bg-cyan-100">
+                     <span class="font-bold">Oct 14</span> <span class="text-gray-600 text-sm">Flex Day</span>
+                </button>
+                 <button onclick="showContent('day15')" class="day-btn text-left p-4 rounded-lg bg-white shadow-md hover:bg-cyan-100">
+                     <span class="font-bold">Oct 15</span> <span class="text-gray-600 text-sm">Departure</span>
+                </button>
+                <button onclick="showContent('packing')" class="day-btn text-left p-4 rounded-lg bg-white shadow-md hover:bg-amber-100 mt-4">
+                     <span class="font-bold text-amber-700">Packing List</span>
+                </button>
+            </nav>
+
+            <!-- Content Display -->
+            <main id="content-display" class="lg:w-3/4">
+                <!-- Content will be injected here by JavaScript -->
+            </main>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div id="review-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden" onclick="closeReviewModal()">
+        <div class="modal-content bg-white rounded-2xl shadow-xl w-full max-w-md p-6 transform scale-95 opacity-0" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modal-title" class="text-2xl font-bold text-gray-800">Reviews</h3>
+                <button onclick="closeReviewModal()" class="text-gray-400 hover:text-gray-600">&times;</button>
+            </div>
+            <p class="text-gray-600 mb-6">Check out what others are saying on your favorite platforms.</p>
+            <div class="space-y-3">
+                <a id="google-link" href="#" target="_blank" class="block w-full text-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition-colors">Google Maps</a>
+                <a id="yelp-link" href="#" target="_blank" class="block w-full text-center bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg transition-colors">Yelp</a>
+                <a id="tripadvisor-link" href="#" target="_blank" class="block w-full text-center bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition-colors">TripAdvisor</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const itineraryData = {
+            day8: {
+                title: 'Wednesday, Oct 8 – Arrival + Ease In',
+                items: [
+                    { time: '10:40 AM', title: 'Land at OGG', description: 'Welcome to Maui! Pick up the rental car.', icon: '✈️', search: 'Kahului Airport OGG' },
+                    { time: '12:00 PM', title: 'Geste Shrimp Truck', description: 'Locally loved shrimp truck - spicy pineapple shrimp is a must-try.', icon: '🍤', search: 'Geste Shrimp Truck Kahului', yUrl: 'https://www.yelp.com/biz/geste-shrimp-truck-kahului' },
+                    { time: '1:30 PM', title: 'Costco Run', description: 'Stock up on essentials, snacks, and drinks.', icon: '🛒', search: 'Costco Kahului', yUrl: 'https://www.yelp.com/biz/costco-kahului' },
+                    { time: '3:00 PM', title: 'Condo Check-In', description: 'Unpack, unwind, and settle into island mode at Maui Vista.', icon: '🏡', search: 'Maui Vista Kihei', yUrl: 'https://www.yelp.com/biz/maui-vista-kihei' },
+                    { time: '6:30 PM', title: "Tamura's Poke", description: 'Legendary poke shop for a relaxed condo dinner.', icon: '🐟', search: "Tamura's Fine Wine & Liquors Kihei", yUrl: 'https://www.yelp.com/biz/tamuras-fine-wine-and-liquors-kihei' },
+                ]
+            },
+            day9: {
+                title: 'Thursday, Oct 9 – Road to Hāna Adventure',
+                special: 'hana',
+                items: [
+                    { time: '5:30 AM', title: 'Start Your Engines!', description: 'Early start for the full day adventure.', icon: '🌅' },
+                    { time: 'Stop 1', title: 'Twin Falls', description: 'Quick waterfall hike at Mile Marker 2.', icon: '🏞️', search: 'Twin Falls Maui', yUrl: 'https://www.yelp.com/biz/twin-falls-haiku' },
+                    { time: 'Stop 2', title: "Auntie Sandy's", description: 'Famous for banana bread on the Keʻanae Peninsula.', icon: '🍞', search: "Auntie Sandy's Banana Bread Maui", yUrl: 'https://www.yelp.com/biz/auntie-sandys-banana-bread-keanae' },
+                    { time: 'Stop 3', title: "Wai'ānapanapa State Park", description: 'Stunning black sand beach. RESERVATIONS REQUIRED!', icon: '🏖️', search: "Wai'ānapanapa State Park", yUrl: 'https://www.yelp.com/biz/waianapanapa-state-park-hana' },
+                    { time: 'Stop 4', title: "Pua'a Ka'a Falls", description: 'A refreshing waterfall swim stop.', icon: '💧', search: "Pua'a Ka'a State Wayside Park", yUrl: 'https://www.yelp.com/biz/puaa-kaa-state-wayside-park-haiku' },
+                    { time: 'Stop 5', title: 'Wailua Falls', description: 'Final scenic stop before turning back.', icon: '📸', search: 'Wailua Falls Maui', yUrl: 'https://www.yelp.com/biz/wailua-falls-hana-2' },
+                    { time: 'Snacks', title: "Coconut Glen's & Hana Farms", description: 'Enjoy vegan ice cream and local treats.', icon: '🥥', search: "Coconut Glen's Maui", yUrl: 'https://www.yelp.com/biz/coconut-glens-haiku' },
+                    { time: '6:00 PM', title: 'Return to Kihei', description: 'Arrive back at the condo after a long, amazing day.', icon: '🌙' },
+                ]
+            },
+            day10: {
+                title: "Friday, Oct 10 – 'Īao Valley + West Maui Loop",
+                items: [
+                    { time: '8:00 AM', title: 'Four Sisters Bakery', description: 'Island-famous for their warm, buttery rolls.', icon: '🥐', search: 'Four Sisters Bakery Wailuku', yUrl: 'https://www.yelp.com/biz/four-sisters-bakery-wailuku' },
+                    { time: '9:00 AM', title: "'Īao Valley State Monument", description: 'Lush rainforest valley with a historic needle peak.', icon: '⛰️', search: "'Īao Valley State Monument", yUrl: 'https://www.yelp.com/biz/iao-valley-state-monument-wailuku' },
+                    { time: '11:15 AM', title: "Leoda's Kitchen & Pie Shop", description: 'Try the banana cream pie or savory pot pies.', icon: '🥧', search: "Leoda's Kitchen & Pie Shop Olowalu", yUrl: 'https://www.yelp.com/biz/leodas-kitchen-and-pie-shop-lahaina' },
+                    { time: '12:30 PM', title: 'Baby Beach', description: 'Gentle reef-protected beach, ideal for a relaxing swim.', icon: '🌊', search: 'Baby Beach Lahaina', yUrl: 'https://www.yelp.com/biz/baby-beach-lahaina' },
+                ]
+            },
+            day11: {
+                title: 'Saturday, Oct 11 – Snorkel + West Maui Sunset',
+                items: [
+                    { time: '6:30 AM', title: 'Molokini & Turtle Town Snorkel', description: 'Half-day raft tour with vibrant coral and sea turtles.', icon: '�', search: 'Molokini Snorkel Tour Maalaea Harbor' },
+                    { time: '12:30 PM', title: 'South Maui Fish Co.', description: 'Legendary poke plates and grilled fish.', icon: '🐠', search: 'South Maui Fish Co. Kihei', yUrl: 'https://www.yelp.com/biz/south-maui-fish-co-kihei' },
+                    { time: '2:00 PM', title: 'Scenic Drive to Kapalua', description: 'Soak in winding coastal roads and ocean panoramas.', icon: '🚗' },
+                    { time: '5:15 PM', title: "Merriman's Kapalua", description: 'Sunset oceanfront dinner with a view of dreams.', icon: '🌅', search: "Merriman's Kapalua", yUrl: 'https://www.yelp.com/biz/merrimans-kapalua-lahaina' },
+                ]
+            },
+            day12: {
+                title: 'Sunday, Oct 12 – Chill in Kihei',
+                items: [
+                    { time: '9:00 AM', title: 'Akamai Coffee Co.', description: 'Top-tier espresso to start your lazy day right.', icon: '☕', search: 'Akamai Coffee Kihei', yUrl: 'https://www.yelp.com/biz/akamai-coffee-co-kihei-3' },
+                    { time: '10:00 AM', title: 'Kamaole Beach Park II', description: 'A low-key beach day with calm surf and shady palms.', icon: '🏖️', search: 'Kamaole Beach Park II Kihei', yUrl: 'https://www.yelp.com/biz/kamaole-beach-park-ii-kihei' },
+                    { time: '1:00 PM', title: 'Paia Fish Market Southside', description: 'Casual mahi sandwiches, grilled fish, and cold beer.', icon: '🍔', search: 'Paia Fish Market Southside Kihei', yUrl: 'https://www.yelp.com/biz/paia-fish-market-southside-kihei' },
+                    { time: '3:30 PM', title: "Ululani's Shave Ice", description: "Maui's best shave ice with natural fruit syrups.", icon: '🍧', search: "Ululani's Hawaiian Shave Ice Kihei", yUrl: 'https://www.yelp.com/biz/ululanis-hawaiian-shave-ice-kihei-4' },
+                    { time: '7:00 PM', title: "Ka'ana Kitchen", description: 'Refined Hawaiian cuisine in a sunset-lit setting.', icon: '🍽️', search: "Ka'ana Kitchen at Andaz Maui", yUrl: 'https://www.yelp.com/biz/kaana-kitchen-wailea' },
+                ]
+            },
+            day13: {
+                title: 'Monday, Oct 13 – Upcountry Maui',
+                items: [
+                    { time: '9:00 AM', title: 'La Provence', description: 'Charming French café with croissants and a view.', icon: '🥐', search: 'La Provence Kula', yUrl: 'https://www.yelp.com/biz/la-provence-kula-2' },
+                    { time: '10:30 AM', title: "Ali'i Kula Lavender Farm", description: 'Stroll through peaceful gardens with scenic vistas.', icon: '💜', search: "Ali'i Kula Lavender Farm", yUrl: 'https://www.yelp.com/biz/alii-kula-lavender-farm-kula' },
+                    { time: '12:30 PM', title: 'MauiWine + King\'s Cottage Café', description: 'Taste unique pineapple wines on the vineyard grounds.', icon: '🍷', search: 'MauiWine Ulupalakua', yUrl: 'https://www.yelp.com/biz/mauiwine-kula' },
+                ]
+            },
+            day14: {
+                title: 'Tuesday, Oct 14 – Flex Day for Exploration',
+                items: [
+                    { time: 'Option 1', title: 'Upcountry Farmers Market', description: 'Local produce, handmade crafts, and breakfast burritos.', icon: '🛍️', search: 'Upcountry Farmers Market Kula', yUrl: 'https://www.yelp.com/biz/upcountry-farmers-market-pukalani' },
+                    { time: 'Option 2', title: 'Makawao Town', description: 'Cowboy-meets-artist vibes, browse galleries and shops.', icon: '🎨', search: 'Makawao Town Maui' },
+                    { time: 'Option 3', title: 'Coral Gardens Snorkel Tour', description: 'A quieter alternative to Molokini, launching from Kihei.', icon: '🐠', search: 'Coral Gardens Snorkel Tour Maui' },
+                    { time: 'Option 4', title: 'Kamaole III Beach', description: 'Easygoing beach time to reflect, swim, or nap.', icon: '😴', search: 'Kamaole Beach Park III', yUrl: 'https://www.yelp.com/biz/kamaole-beach-park-iii-kihei' },
+                ]
+            },
+            day15: {
+                title: 'Wednesday, Oct 15 – Departure Day',
+                items: [
+                    { time: '8:00 AM', title: 'Final Beach Dip', description: 'One last swim at Kamaole Beach before packing up.', icon: '🌊', search: 'Kamaole Beach Park I', yUrl: 'https://www.yelp.com/biz/kamaole-beach-park-i-kihei' },
+                    { time: '10:00 AM', title: 'Final Pack & Checkout', description: 'Quick rinse and head to the airport.', icon: '짐' },
+                    { time: '12:05 PM', title: 'Depart OGG → LAX', description: 'Mahalo, Maui! Until next time.', icon: '✈️' },
+                ]
+            },
+            packing: {
+                title: 'Interactive Packing List',
+                items: [
+                    { item: 'Sunglasses', note: 'Polarized recommended' },
+                    { item: 'Swimwear x2', note: 'For beach, snorkeling, pool' },
+                    { item: 'Hat', note: 'Sun protection' },
+                    { item: 'Reef-safe Sunscreen', note: 'Required by law in Hawaii' },
+                    { item: 'Flip-flops / Sandals', note: 'For general wear' },
+                    { item: 'Comfortable walking shoes', note: 'For hikes and exploration' },
+                    { item: 'Light jacket / sweater', note: 'Evenings can get breezy' },
+                    { item: 'Camera or smartphone', note: 'For all the memories' },
+                    { item: 'Packable beach towel', note: 'Not always available at beaches' },
+                    { item: 'Reusable water bottle', note: 'Stay hydrated!' },
+                    { item: 'Packable tote/beach bag', note: 'For markets and beach gear' },
+                    { item: 'Toiletries', note: 'Don\'t forget after-sun lotion!' },
+                    { item: 'Undergarments & socks', note: 'Bring extras!' },
+                ]
+            }
+        };
+
+        const contentDisplay = document.getElementById('content-display');
+        const reviewModal = document.getElementById('review-modal');
+        const modalContent = reviewModal.querySelector('.modal-content');
+        const modalTitle = document.getElementById('modal-title');
+        const googleLink = document.getElementById('google-link');
+        const yelpLink = document.getElementById('yelp-link');
+        const tripadvisorLink = document.getElementById('tripadvisor-link');
+
+        function showContent(key) {
+            contentDisplay.innerHTML = '';
+            const data = itineraryData[key];
+            const card = document.createElement('div');
+            card.className = 'content-card bg-white p-6 md:p-8 rounded-2xl shadow-lg';
+            let contentHTML = `<h2 class="text-3xl font-bold text-gray-800 mb-6">${data.title}</h2>`;
+
+            if (data.special === 'hana') {
+                contentHTML += `<div class="relative w-full h-16 bg-gray-200 rounded-lg overflow-hidden mb-6"><div class="absolute top-0 left-0 w-full h-full"><svg class="w-full h-full" preserveAspectRatio="none"><path d="M0,32 C100,0 200,64 300,32 S500,0 600,32 S800,64 900,32" stroke="#a7f3d0" stroke-width="4" fill="none" /></svg></div><div class="road-to-hana-car absolute top-1/2 -translate-y-1/2 text-3xl">🚗</div></div>`;
+            }
+
+            if (key === 'packing') {
+                contentHTML += '<div class="space-y-4">';
+                data.items.forEach((p, index) => {
+                    contentHTML += `<div class="packing-item flex items-center bg-gray-50 p-3 rounded-lg"><input type="checkbox" id="item-${index}" class="h-5 w-5 rounded border-gray-300 text-cyan-600 focus:ring-cyan-500 mr-4"><label for="item-${index}" class="flex-grow"><span class="font-semibold text-gray-700">${p.item}</span><span class="text-sm text-gray-500 block">${p.note}</span></label></div>`;
+                });
+                contentHTML += '</div>';
+            } else {
+                contentHTML += '<div class="space-y-2">';
+                data.items.forEach(item => {
+                    const isClickable = item.search ? `onclick="openReviewModal('${item.title}', '${item.search}', '${item.yUrl}')"` : '';
+                    const clickableClass = item.search ? 'itinerary-item-clickable rounded-lg p-4 -ml-4' : 'p-4 -ml-4';
+                    
+                    contentHTML += `<div class="${clickableClass}" ${isClickable}>
+                        <div class="relative pl-10">
+                            <div class="absolute -left-1 top-1 h-8 w-8 rounded-full bg-cyan-500 flex items-center justify-center text-white text-lg ring-4 ring-white">${item.icon}</div>
+                            <p class="text-sm font-semibold text-cyan-600">${item.time}</p>
+                            <h3 class="text-xl font-bold text-gray-800">${item.title}</h3>
+                            <p class="text-gray-600">${item.description}</p>
+                        </div>
+                    </div>`;
+                });
+                contentHTML += '</div>';
+            }
+            
+            card.innerHTML = contentHTML;
+            contentDisplay.appendChild(card);
+            setTimeout(() => card.classList.add('active'), 50);
+            document.querySelectorAll('.day-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`button[onclick="showContent('${key}')"]`).classList.add('active');
+        }
+
+        function openReviewModal(title, searchTerm, yUrl) {
+            const encodedSearchTerm = encodeURIComponent(searchTerm);
+            modalTitle.textContent = title;
+            googleLink.href = `https://www.google.com/maps/search/?api=1&query=${encodedSearchTerm}`;
+            yelpLink.href = yUrl || `https://www.yelp.com/search?find_desc=${encodedSearchTerm}`;
+            tripadvisorLink.href = `https://www.tripadvisor.com/Search?q=${encodedSearchTerm}`;
+            
+            reviewModal.classList.remove('hidden');
+            setTimeout(() => {
+                reviewModal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95', 'opacity-0');
+            }, 10);
+        }
+
+        function closeReviewModal() {
+            reviewModal.classList.add('opacity-0');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                reviewModal.classList.add('hidden');
+            }, 300);
+        }
+
+        window.onload = () => {
+            showContent('day8');
+        };
+    </script>
+</body>
+</html>
+�
