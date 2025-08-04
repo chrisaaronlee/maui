@@ -27,6 +27,8 @@
             transform: translateY(20px);
             background-color: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
         }
         .content-card.active {
             opacity: 1;
@@ -37,6 +39,7 @@
             color: white;
             transform: scale(1.05);
             box-shadow: 0 4px 15px rgba(0, 119, 190, 0.3);
+            animation: pulse 2s infinite;
         }
         .day-btn {
             transition: all 0.3s ease;
@@ -51,11 +54,12 @@
             color: #9ca3af;
         }
         .road-to-hana-car {
-            animation: drive 8s linear infinite;
+            animation: drive 10s linear infinite;
+            transform: scaleX(-1); /* Flip the car emoji */
         }
         @keyframes drive {
-            0% { transform: translateX(-150%); }
-            100% { transform: translateX(150%); }
+            0% { left: -10%; }
+            100% { left: 110%; }
         }
         .modal-overlay {
             transition: opacity 0.3s ease;
@@ -87,6 +91,80 @@
         .logo-link:hover img {
             transform: scale(1.1);
         }
+        .ticket {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            display: flex;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .ticket-link:hover .ticket {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+        }
+        .ticket-main {
+            padding: 1.5rem;
+            flex-grow: 1;
+        }
+        .ticket-rip {
+            width: 5rem;
+            border-left: 2px dashed #e5e7eb;
+            position: relative;
+        }
+        .ticket-rip::before, .ticket-rip::after {
+            content: '';
+            position: absolute;
+            width: 1.5rem;
+            height: 1.5rem;
+            background: #f3f4f6;
+            border-radius: 50%;
+            left: -0.75rem;
+        }
+        .ticket-rip::before {
+            top: -0.75rem;
+        }
+        .ticket-rip::after {
+            bottom: -0.75rem;
+        }
+        .airline-logo {
+            max-height: 2rem;
+            width: auto;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1.05);
+            }
+            50% {
+                transform: scale(1.08);
+            }
+        }
+        .timeline-icon {
+            animation: bounce-in 0.6s ease;
+        }
+        @keyframes bounce-in {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+        .bubble {
+            position: absolute;
+            bottom: -20px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: rise 10s infinite ease-in;
+        }
+        @keyframes rise {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(20px);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -105,6 +183,12 @@
                 <h2 class="text-xl font-bold text-gray-800 mb-2 px-4 header-text">Navigation</h2>
                 <!-- Horizontal scrolling container for mobile -->
                 <div class="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible py-2 no-scrollbar">
+                    <button onclick="showContent('flights')" class="day-btn text-left p-4 rounded-lg shadow-md hover:bg-sky-100 flex-shrink-0 w-36 lg:w-full">
+                         <span class="font-bold text-sky-700">Flights</span>
+                    </button>
+                    <button onclick="showContent('packing')" class="day-btn text-left p-4 rounded-lg shadow-md hover:bg-amber-100 flex-shrink-0 w-36 lg:w-full">
+                         <span class="font-bold text-amber-700">Packing List</span>
+                    </button>
                     <button onclick="showContent('day8')" class="day-btn text-left p-4 rounded-lg shadow-md hover:bg-cyan-100 active flex-shrink-0 w-36 lg:w-full">
                         <span class="font-bold">Oct 8</span> <span class="text-gray-600 text-sm block">Arrival</span>
                     </button>
@@ -129,8 +213,8 @@
                      <button onclick="showContent('day15')" class="day-btn text-left p-4 rounded-lg shadow-md hover:bg-cyan-100 flex-shrink-0 w-36 lg:w-full">
                          <span class="font-bold">Oct 15</span> <span class="text-gray-600 text-sm block">Departure</span>
                     </button>
-                    <button onclick="showContent('packing')" class="day-btn text-left p-4 rounded-lg shadow-md hover:bg-amber-100 flex-shrink-0 w-36 lg:w-full">
-                         <span class="font-bold text-amber-700">Packing List</span>
+                    <button onclick="showContent('farmersMarkets')" class="day-btn text-left p-4 rounded-lg shadow-md hover:bg-lime-100 flex-shrink-0 w-36 lg:w-full">
+                         <span class="font-bold text-lime-700">Farmers Markets</span>
                     </button>
                 </div>
             </nav>
@@ -159,7 +243,7 @@
                     <img src="https://m.yelp.com/apple-touch-icon.png" alt="Yelp Logo" class="h-12 rounded-lg">
                 </a>
                 <a id="tripadvisor-link" href="#" target="_blank" class="logo-link">
-                     <img src="https://w7.pngwing.com/pngs/264/340/png-transparent-tripadvisor-thumbnail-review-platforms-logos-thumbnail.png" alt="TripAdvisor Logo" class="h-12">
+                     <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/tripadvisor-icon.png" alt="TripAdvisor Logo" class="h-12">
                 </a>
             </div>
         </div>
@@ -167,6 +251,25 @@
 
     <script>
         const itineraryData = {
+            flights: {
+                title: "✈️ Flight Info",
+                passengers: [
+                    { 
+                        name: "Chris, Alex Yee, & Jade Kok",
+                        flights: [
+                            { type: "Outbound", airline: "Delta Air Lines", logo: "https://purepng.com/public/uploads/large/purepng.com-delta-air-lines-logologobrand-logoiconslogos-251519939710be40n.png", flightNum: "DL425", from: "LAX", to: "OGG", departure: "Wed, Oct 8 – 8:00 AM", arrival: "Wed, Oct 8 – 10:40 AM" },
+                            { type: "Return", airline: "Delta Air Lines", logo: "https://purepng.com/public/uploads/large/purepng.com-delta-air-lines-logologobrand-logoiconslogos-251519939710be40n.png", flightNum: "DL463", from: "OGG", to: "LAX", departure: "Wed, Oct 15 – 12:05 PM", arrival: "Wed, Oct 15 – 8:25 PM" }
+                        ]
+                    },
+                    {
+                        name: "Timothy Lee",
+                        flights: [
+                            { type: "Outbound", airline: "Alaska Airlines", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Alaska_Airlines_logo.svg/1200px-Alaska_Airlines_logo.svg.png", flightNum: "AS8041", from: "SFO", to: "OGG", departure: "Wed, Oct 8 – 9:30 AM", arrival: "Wed, Oct 8 – 11:47 AM" },
+                            { type: "Return", airline: "Hawaiian Airlines", logo: "https://iprsoftwaremedia.com/249/files/20173/5903cf8aa13835739c23ccba_HAL_r_h_rgb/HAL_r_h_rgb_91477b97-5878-4897-9e46-3f4643c6dc96-prv.jpg", flightNum: "HA42", from: "OGG", to: "SFO", departure: "Wed, Oct 15 – 10:30 AM", arrival: "Wed, Oct 15 – 6:32 PM" }
+                        ]
+                    }
+                ]
+            },
             day8: {
                 title: "Wednesday, Oct 8 – Arrival + Ease In",
                 items: [
@@ -202,6 +305,7 @@
             },
             day11: {
                 title: "Saturday, Oct 11 – Snorkel + West Maui Sunset",
+                special: "snorkel",
                 items: [
                     { time: "6:30 AM", title: "Molokini & Turtle Town Snorkel", description: "Half-day raft tour with vibrant coral and sea turtles.", icon: "🐢", search: "Molokini Snorkel Tour Maalaea Harbor" },
                     { time: "12:30 PM", title: "South Maui Fish Co.", description: "Legendary poke plates and grilled fish.", icon: "🐠", search: "South Maui Fish Co. Kihei", yUrl: "https://www.yelp.com/biz/south-maui-fish-co-kihei", taUrl: "https://www.tripadvisor.com/Restaurant_Review-g60632-d8410226-Reviews-South_Maui_Fish_Company-Kihei_Maui_Hawaii.html" },
@@ -261,6 +365,16 @@
                     { item: "Toiletries", note: "Don't forget after-sun lotion!" },
                     { item: "Undergarments & socks", note: "Bring extras!" },
                 ]
+            },
+            farmersMarkets: {
+                title: "Optional Maui Farmers Markets",
+                items: [
+                    { time: "Mon-Sat, 8AM-4PM", title: "Farmers Market Maui – Kihei", description: "Neighborhood market with fruits, smoothies, and local crafts.", icon: "🍓", search: "Farmers Market Maui Kihei", yUrl: "https://www.yelp.com/biz/farmers-market-maui-kihei", taUrl: "https://www.tripadvisor.com/Attraction_Review-g60632-d1532050-Reviews-Upcountry_Farmer_s_Market-Kihei_Maui_Hawaii.html" },
+                    { time: "Tuesdays, 8AM-11AM", title: "Wailea Village Farmers Market", description: "Upscale artisan market with baked goods, flowers, and boutique foods.", icon: "🌺", search: "Wailea Village Farmers Market", yUrl: "https://www.yelp.com/biz/wailea-village-farmers-market-wailea" },
+                    { time: "Mon/Wed/Fri, 8AM-12PM", title: "Maui Nui Farmers Market - Kahului", description: "Local favorite for fresh produce and tropical fruits.", icon: "🍍", search: "Maui Nui Farmers Market Kahului", yUrl: "https://www.yelp.com/biz/maui-nui-farmers-market-kahului" },
+                    { time: "Open daily, 9AM-4PM", title: "Kula Country Farms Farm Stand", description: "Scenic upcountry stop with strawberry-picking and local jams.", icon: "🚜", search: "Kula Country Farms Kula", yUrl: "https://www.yelp.com/biz/kula-country-farms-kula", taUrl: "https://www.tripadvisor.com/Attraction_Review-g60633-d1532050-Reviews-Kula_Country_Farms-Kula_Maui_Hawaii.html" },
+                    { time: "Wed & Sat, 8AM-12PM", title: "Napili Farmers Market - Lahaina", description: "Smoothie bowls, fruit juices, and organic produce.", icon: "🥥", search: "Napili Farmers Market Lahaina", yUrl: "https://www.yelp.com/biz/napili-farmers-market-lahaina" },
+                ]
             }
         };
 
@@ -289,6 +403,43 @@
                     contentHTML += `<div class="packing-item flex items-center bg-gray-50 p-3 rounded-lg"><input type="checkbox" id="item-${index}" class="h-5 w-5 rounded border-gray-300 text-cyan-600 focus:ring-cyan-500 mr-4"><label for="item-${index}" class="flex-grow"><span class="font-semibold text-gray-700">${p.item}</span><span class="text-sm text-gray-500 block">${p.note}</span></label></div>`;
                 });
                 contentHTML += '</div>';
+            } else if (key === 'flights') {
+                 data.passengers.forEach(person => {
+                    contentHTML += `<h3 class="text-2xl font-bold text-gray-800 mb-4 mt-6">${person.name}</h3>`;
+                    person.flights.forEach(flight => {
+                        contentHTML += `
+                        <a href="https://www.google.com/search?q=${flight.airline} ${flight.flightNum}" target="_blank" class="block ticket-link">
+                            <div class="ticket">
+                                <div class="ticket-main">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <div>
+                                            <p class="text-sm text-gray-500">${flight.type}</p>
+                                            <p class="font-bold text-lg text-gray-800">${flight.airline}</p>
+                                        </div>
+                                        <img src="${flight.logo}" alt="${flight.airline} Logo" class="airline-logo">
+                                    </div>
+                                    <div class="flex justify-between items-end">
+                                        <div>
+                                            <p class="text-sm text-gray-500">From</p>
+                                            <p class="text-3xl font-bold text-gray-900">${flight.from}</p>
+                                            <p class="text-sm text-gray-600">${flight.departure}</p>
+                                        </div>
+                                        <div class="text-center text-gray-400">✈️</div>
+                                        <div class="text-right">
+                                            <p class="text-sm text-gray-500">To</p>
+                                            <p class="text-3xl font-bold text-gray-900">${flight.to}</p>
+                                            <p class="text-sm text-gray-600">${flight.arrival}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ticket-rip bg-gray-50 flex flex-col justify-center items-center">
+                                    <p class="text-xs text-gray-500 transform -rotate-90 whitespace-nowrap">Flight ${flight.flightNum}</p>
+                                </div>
+                            </div>
+                        </a>
+                        `;
+                    });
+                });
             } else {
                 contentHTML += '<div class="space-y-2">';
                 data.items.forEach(item => {
@@ -359,7 +510,7 @@
         }
 
         window.onload = () => {
-            showContent('day8');
+            showContent('flights');
         };
     </script>
 </body>
