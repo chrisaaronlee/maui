@@ -54,12 +54,15 @@
             color: #9ca3af;
         }
         .road-to-hana-car {
-            animation: drive 10s linear infinite;
-            transform: scaleX(-1); /* Flip the car emoji */
+            position: absolute;
+            offset-path: path("M900,32 C800,64 700,0 600,32 S400,64 300,32 S100,0 0,32");
+            animation: drive-on-path 10s linear infinite;
+            offset-rotate: 0deg; /* Keep car upright */
+            transform: scaleX(-1); /* Flip the car horizontally */
         }
-        @keyframes drive {
-            0% { left: -10%; }
-            100% { left: 110%; }
+        @keyframes drive-on-path {
+            0% { offset-distance: 0%; }
+            100% { offset-distance: 100%; }
         }
         .modal-overlay {
             transition: opacity 0.3s ease;
@@ -148,12 +151,17 @@
             70% { transform: scale(1.1); opacity: 1; }
             100% { transform: scale(1); }
         }
-        .bubble {
+        .bubble, .floating-emoji {
             position: absolute;
-            bottom: -20px;
+            bottom: -30px;
+            animation: rise 10s infinite ease-in;
+        }
+        .bubble {
             background-color: rgba(255, 255, 255, 0.5);
             border-radius: 50%;
-            animation: rise 10s infinite ease-in;
+        }
+        .floating-emoji {
+            font-size: 1.5rem;
         }
         @keyframes rise {
             0% {
@@ -216,6 +224,12 @@
                     <button onclick="showContent('farmersMarkets')" class="day-btn text-left p-4 rounded-lg shadow-md hover:bg-lime-100 flex-shrink-0 w-36 lg:w-full">
                          <span class="font-bold text-lime-700">Farmers Markets</span>
                     </button>
+                    <button onclick="showContent('snorkelSpots')" class="day-btn text-left p-4 rounded-lg shadow-md hover:bg-blue-100 flex-shrink-0 w-36 lg:w-full">
+                         <span class="font-bold text-blue-700">Snorkel Spots</span>
+                    </button>
+                    <button onclick="showContent('restaurants')" class="day-btn text-left p-4 rounded-lg shadow-md hover:bg-red-100 flex-shrink-0 w-36 lg:w-full">
+                         <span class="font-bold text-red-700">Restaurants</span>
+                    </button>
                 </div>
             </nav>
 
@@ -233,7 +247,7 @@
                 <h3 id="modal-title" class="text-2xl font-bold text-gray-800">Reviews</h3>
                 <button onclick="closeReviewModal()" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">&times;</button>
             </div>
-            <p class="text-gray-600 mb-6">Check out what others are saying on your favorite platforms.</p>
+            <p id="modal-description" class="text-gray-600 mb-6">Check out what others are saying on your favorite platforms.</p>
             <div class="flex justify-around items-center pt-4">
                 <!-- Logos -->
                 <a id="google-link" href="#" target="_blank" class="logo-link">
@@ -325,6 +339,7 @@
             },
             day13: {
                 title: "Monday, Oct 13 – Upcountry Maui",
+                special: "lavender",
                 items: [
                     { time: "9:00 AM", title: "La Provence", description: "Charming French café with croissants and a view.", icon: "🥐", search: "La Provence Kula", yUrl: "https://www.yelp.com/biz/la-provence-kula-2", taUrl: "https://www.tripadvisor.com/Restaurant_Review-g60633-d1017316-Reviews-La_Provence-Kula_Maui_Hawaii.html" },
                     { time: "10:30 AM", title: "Ali'i Kula Lavender Farm", description: "Stroll through peaceful gardens with scenic vistas.", icon: "💜", search: "Ali'i Kula Lavender Farm", yUrl: "https://www.yelp.com/biz/alii-kula-lavender-farm-kula", taUrl: "https://www.tripadvisor.com/Attraction_Review-g60633-d522359-Reviews-Ali_i_Kula_Lavender-Kula_Maui_Hawaii.html" },
@@ -368,12 +383,30 @@
             },
             farmersMarkets: {
                 title: "Optional Maui Farmers Markets",
+                special: "market",
                 items: [
                     { time: "Mon-Sat, 8AM-4PM", title: "Farmers Market Maui – Kihei", description: "Neighborhood market with fruits, smoothies, and local crafts.", icon: "🍓", search: "Farmers Market Maui Kihei", yUrl: "https://www.yelp.com/biz/farmers-market-maui-kihei", taUrl: "https://www.tripadvisor.com/Attraction_Review-g60632-d1532050-Reviews-Upcountry_Farmer_s_Market-Kihei_Maui_Hawaii.html" },
                     { time: "Tuesdays, 8AM-11AM", title: "Wailea Village Farmers Market", description: "Upscale artisan market with baked goods, flowers, and boutique foods.", icon: "🌺", search: "Wailea Village Farmers Market", yUrl: "https://www.yelp.com/biz/wailea-village-farmers-market-wailea" },
                     { time: "Mon/Wed/Fri, 8AM-12PM", title: "Maui Nui Farmers Market - Kahului", description: "Local favorite for fresh produce and tropical fruits.", icon: "🍍", search: "Maui Nui Farmers Market Kahului", yUrl: "https://www.yelp.com/biz/maui-nui-farmers-market-kahului" },
                     { time: "Open daily, 9AM-4PM", title: "Kula Country Farms Farm Stand", description: "Scenic upcountry stop with strawberry-picking and local jams.", icon: "🚜", search: "Kula Country Farms Kula", yUrl: "https://www.yelp.com/biz/kula-country-farms-kula", taUrl: "https://www.tripadvisor.com/Attraction_Review-g60633-d1532050-Reviews-Kula_Country_Farms-Kula_Maui_Hawaii.html" },
                     { time: "Wed & Sat, 8AM-12PM", title: "Napili Farmers Market - Lahaina", description: "Smoothie bowls, fruit juices, and organic produce.", icon: "🥥", search: "Napili Farmers Market Lahaina", yUrl: "https://www.yelp.com/biz/napili-farmers-market-lahaina" },
+                ]
+            },
+            snorkelSpots: {
+                title: "🐢 Snorkel Spots",
+                items: [
+                    { time: "🥇 1. Ahihi Cove – Makena", title: "“Natural aquarium” vibes", description: "Crystal-clear, protected waters. Beginner friendly, high fish density. Best in the mornings. No sandy beach (rocky entry), but the fish life and visibility are unmatched.", icon: "🌊", search: "Ahihi Kinau Natural Area Reserve" },
+                    { time: "🥈 2. Ulua Beach – Wailea", title: "Easy access & balanced scenery", description: "Beginner-friendly reef close to shore. Super easy access, occasional turtles, and has showers/facilities. Best morning visibility.", icon: "🐠", search: "Ulua Beach" },
+                    { time: "🥉 3. Maluaka Beach (Turtle Town)", title: "Known for turtles", description: "Long stretch of quiet beach. Great for turtle sightings! Visibility can be hit or miss in October.", icon: "🐢", search: "Maluaka Beach" },
+                    { time: "4️⃣ Honolua Bay – Northwest Maui", title: "Unreal reef", description: "Epic on calm days, but can be for advanced snorkelers if windy. Gorgeous but hard to catch in optimal conditions during October.", icon: "🌴", search: "Honolua Bay" },
+                    { time: "5️⃣ Kapalua Bay – Northwest Maui", title: "Sheltered cove", description: "Great views and very beginner-friendly. Nice for lounging. Still scenic and calm, but reef isn’t as lively as other spots.", icon: "🪸", search: "Kapalua Bay" },
+                ]
+            },
+            restaurants: {
+                title: "🍽️ Optional Restaurants",
+                items: [
+                    { time: "Closes by 2 PM", title: "Ichiban Okazuya – Wailuku", description: "Local-style lunch plates known for garlic chicken, miso butterfish, and grilled ahi. Great for lunch if you’re in Wailuku.", icon: "🍱", search: "Ichiban Okazuya Wailuku", yUrl: "https://www.yelp.com/biz/ichiban-okazuya-wailuku" },
+                    { time: "Best for breakfast or early lunch", title: "Waikapū on 30 – Wailuku", description: "Local produce stand serving bentos, sandwiches, musubi & fresh smoothies. Popular with locals for grab-and-go.", icon: "🥪", search: "Waikapū on 30 Wailuku", yUrl: "https://www.yelp.com/biz/waikapu-on-30-wailuku" },
                 ]
             }
         };
@@ -382,6 +415,7 @@
         const reviewModal = document.getElementById('review-modal');
         const modalContent = reviewModal.querySelector('.modal-content');
         const modalTitle = document.getElementById('modal-title');
+        const modalDescription = document.getElementById('modal-description');
         const googleLink = document.getElementById('google-link');
         const yelpLink = document.getElementById('yelp-link');
         const tripadvisorLink = document.getElementById('tripadvisor-link');
@@ -394,7 +428,14 @@
             let contentHTML = `<h2 class="text-3xl font-bold text-gray-800 mb-6">${data.title}</h2>`;
 
             if (data.special === 'hana') {
-                contentHTML += `<div class="relative w-full h-16 bg-gray-200 rounded-lg overflow-hidden mb-6"><div class="absolute top-0 left-0 w-full h-full"><svg class="w-full h-full" preserveAspectRatio="none"><path d="M0,32 C100,0 200,64 300,32 S500,0 600,32 S800,64 900,32" stroke="#a7f3d0" stroke-width="4" fill="none" /></svg></div><div class="road-to-hana-car absolute top-1/2 -translate-y-1/2 text-3xl">🚗</div></div>`;
+                contentHTML += `<div class="relative w-full h-16 bg-gray-200 rounded-lg overflow-hidden mb-6">
+                    <div class="absolute top-0 left-0 w-full h-full">
+                        <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 900 64">
+                            <path d="M900,32 C800,64 700,0 600,32 S400,64 300,32 S100,0 0,32" stroke="#a7f3d0" stroke-width="4" fill="none" />
+                        </svg>
+                    </div>
+                    <div class="road-to-hana-car text-3xl">🚗</div>
+                </div>`;
             }
 
             if (key === 'packing') {
@@ -452,12 +493,13 @@
                             data-search="${item.search.replace(/"/g, '&quot;')}" 
                             data-yurl="${item.yUrl || ''}"
                             data-taurl="${item.taUrl || ''}"
+                            data-description="${item.description.replace(/"/g, '&quot;')}"
                         `;
                     }
 
                     contentHTML += `<div class="${clickableClass}" ${clickableAttrs}>
                         <div class="relative pl-10">
-                            <div class="absolute -left-1 top-1 h-8 w-8 rounded-full bg-cyan-500 flex items-center justify-center text-white text-lg ring-4 ring-white">${item.icon}</div>
+                            <div class="absolute -left-1 top-1 h-8 w-8 rounded-full bg-cyan-500 flex items-center justify-center text-white text-lg ring-4 ring-white timeline-icon">${item.icon}</div>
                             <p class="text-sm font-semibold text-cyan-600">${item.time}</p>
                             <h3 class="text-xl font-bold text-gray-800">${item.title}</h3>
                             <p class="text-gray-600">${item.description}</p>
@@ -469,6 +511,34 @@
             
             card.innerHTML = contentHTML;
             contentDisplay.appendChild(card);
+            
+            const createFloatingItems = (items, className) => {
+                for (let i = 0; i < 15; i++) {
+                    const item = document.createElement('div');
+                    item.className = className;
+                    if (className === 'bubble') {
+                        const size = Math.random() * 20 + 5;
+                        item.style.width = `${size}px`;
+                        item.style.height = `${size}px`;
+                    } else {
+                        item.textContent = items[Math.floor(Math.random() * items.length)];
+                    }
+                    item.style.left = `${Math.random() * 100}%`;
+                    item.style.animationDuration = `${Math.random() * 5 + 8}s`;
+                    item.style.animationDelay = `${Math.random() * 5}s`;
+                    card.appendChild(item);
+                }
+            };
+
+            if (data.special === 'snorkel') {
+                createFloatingItems([], 'bubble');
+            }
+            if (data.special === 'lavender') {
+                createFloatingItems(['💜'], 'floating-emoji');
+            }
+            if (data.special === 'market') {
+                createFloatingItems(['🍓', '🍍', '🥥', '🌺'], 'floating-emoji');
+            }
 
             // Add event listeners after content is rendered
             document.querySelectorAll('.itinerary-item-clickable').forEach(el => {
@@ -478,7 +548,8 @@
                     const searchTerm = target.dataset.search;
                     const yUrl = target.dataset.yurl;
                     const taUrl = target.dataset.taurl;
-                    openReviewModal(title, searchTerm, yUrl, taUrl);
+                    const description = target.dataset.description;
+                    openReviewModal(title, searchTerm, yUrl, taUrl, description);
                 });
             });
 
@@ -487,9 +558,10 @@
             document.querySelector(`button[onclick="showContent('${key}')"]`).classList.add('active');
         }
 
-        function openReviewModal(title, searchTerm, yUrl, taUrl) {
+        function openReviewModal(title, searchTerm, yUrl, taUrl, description) {
             const encodedSearchTerm = encodeURIComponent(searchTerm);
             modalTitle.textContent = title;
+            modalDescription.textContent = description || "Check out what others are saying on your favorite platforms.";
             googleLink.href = `https://www.google.com/maps/search/?api=1&query=${encodedSearchTerm}`;
             yelpLink.href = yUrl || `https://www.yelp.com/search?find_desc=${encodedSearchTerm}`;
             tripadvisorLink.href = taUrl || `https://www.tripadvisor.com/Search?q=${encodedSearchTerm}`;
