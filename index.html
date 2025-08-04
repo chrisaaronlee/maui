@@ -27,7 +27,7 @@
             transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
             opacity: 0;
             transform: translateY(20px);
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
@@ -43,9 +43,12 @@
             box-shadow: 0 4px 15px rgba(0, 119, 190, 0.3);
             animation: pulse 2s infinite;
         }
+        .flights-btn.active {
+            background-color: #0ea5e9; /* Brighter sky blue */
+        }
         .day-btn {
             transition: all 0.3s ease;
-             background-color: rgba(255, 255, 255, 0.9);
+             background-color: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(10px);
         }
         .packing-item label {
@@ -118,7 +121,7 @@
             position: absolute;
             width: 1.5rem;
             height: 1.5rem;
-            background: #f3f4f6;
+            background: rgba(243, 244, 246, 0.85); /* Match transparent card bg */
             border-radius: 50%;
             left: -0.75rem;
         }
@@ -142,6 +145,10 @@
         }
         .timeline-icon {
             animation: bounce-in 0.6s ease;
+            transition: transform 0.2s ease;
+        }
+        .itinerary-item-clickable:hover .timeline-icon {
+            transform: scale(1.2);
         }
         @keyframes bounce-in {
             0% { transform: scale(0.5); opacity: 0; }
@@ -154,7 +161,7 @@
             animation: rise 10s infinite ease-in;
         }
         .bubble {
-            background-color: rgba(255, 255, 255, 0.5);
+            background-color: rgba(255, 255, 255, 0.8); /* More pronounced */
             border-radius: 50%;
         }
         .floating-emoji {
@@ -179,25 +186,27 @@
             opacity: 1;
             transform: translateY(0);
         }
+        .sticky-nav {
+            position: sticky;
+            top: 1rem;
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
 
     <div class="container mx-auto p-4 md:p-8 max-w-6xl">
-        <!-- Header -->
         <header class="text-center mb-8">
-            <h1 class="text-5xl md:text-6xl font-pacifico text-gray-800 header-text">Maui Adventure</h1>
-            <p class="text-lg text-gray-700 mt-2 header-text">October 8 - 15, 2025</p>
-            <p class="text-md text-gray-600 italic header-text">"manifesting vibes, underestimating logistics"</p>
+            <h1 class="text-5xl md:text-6xl font-pacifico text-white header-text" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.4);">Maui Adventure</h1>
+            <p class="text-lg text-white mt-2 header-text" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.4);">October 8 - 15, 2025</p>
+            <p class="text-md text-gray-200 italic header-text" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.4);">"manifesting vibes, underestimating logistics"</p>
         </header>
 
         <div class="flex flex-col lg:flex-row gap-8">
-            <!-- Navigation -->
-            <nav class="lg:w-1/4">
-                <h2 class="text-xl font-bold text-gray-800 mb-2 px-4 header-text">Navigation</h2>
-                <!-- Horizontal scrolling container for mobile -->
+            <nav class="lg:w-1/4 lg:sticky-nav">
+                <h2 class="text-xl font-bold text-white mb-2 px-4 header-text" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.4);">Navigation</h2>
                 <div class="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible py-2 no-scrollbar">
-                    <button onclick="showContent('flights')" class="day-btn text-center flex flex-col justify-center items-center p-4 rounded-lg shadow-md hover:bg-sky-100 flex-shrink-0 w-36 lg:w-full lg:text-left lg:items-start">
+                    <button onclick="showContent('flights')" class="day-btn flights-btn text-center flex flex-col justify-center items-center p-4 rounded-lg shadow-md hover:bg-sky-100 flex-shrink-0 w-36 lg:w-full lg:text-left lg:items-start">
                          <span class="font-bold text-sky-700">Flights</span>
                     </button>
                     <button onclick="showContent('packing')" class="day-btn text-center flex flex-col justify-center items-center p-4 rounded-lg shadow-md hover:bg-amber-100 active flex-shrink-0 w-36 lg:w-full lg:text-left lg:items-start">
@@ -239,23 +248,19 @@
                 </div>
             </nav>
 
-            <!-- Content Display -->
             <main id="content-display" class="lg:w-3/4 mt-4 lg:mt-0">
-                <!-- Content will be injected here by JavaScript -->
-            </main>
+                </main>
         </div>
     </div>
 
-    <!-- Review Modal -->
     <div id="review-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden" onclick="closeReviewModal()">
         <div class="modal-content bg-white rounded-2xl shadow-xl w-full max-w-md p-6 transform scale-95 opacity-0" onclick="event.stopPropagation()">
             <div class="flex justify-between items-start mb-4">
                 <h3 id="modal-title" class="text-2xl font-bold text-gray-800">Reviews</h3>
-                <button onclick="closeReviewModal()" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">&times;</button>
+                <button onclick="closeReviewModal()" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">×</button>
             </div>
             <p id="modal-description" class="text-gray-600 mb-6">Check out what others are saying on your favorite platforms.</p>
             <div class="flex justify-around items-center pt-4">
-                <!-- Logos -->
                 <a id="google-link" href="#" target="_blank" class="logo-link">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Google_Maps_icon_%282020%29.svg/1428px-Google_Maps_icon_%282020%29.svg.png" alt="Google Maps Logo" class="h-12">
                 </a>
@@ -271,7 +276,7 @@
             </div>
         </div>
     </div>
-
+    
     <script>
         const itineraryData = {
             flights: {
@@ -311,7 +316,7 @@
                     { time: "Stop 1", title: "Twin Falls", description: "Quick waterfall hike.", longDescription: "Our first taste of the Road to Hana's beauty. This is an easily accessible stop with a short jungle walk to a beautiful waterfall. It's the perfect place to stretch our legs and grab some fresh fruit from the farm stand.", icon: "🏞️", search: "Twin Falls Maui", yUrl: "https://www.yelp.com/biz/twin-falls-trail-haiku", igUrl: "https://www.instagram.com/explore/tags/twinfallsmaui/", ttUrl: "https://www.tiktok.com/search?q=twin%20falls%20maui" },
                     { time: "Stop 2", title: "Aunty Sandy's", description: "Famous for banana bread.", longDescription: "You can't do the Road to Hana without stopping for Aunty Sandy's. This iconic spot on the Ke'anae Peninsula serves up warm, fresh-baked banana bread that's famous across the island.", icon: "🍞", search: "Aunty Sandy's Banana Bread Maui", yUrl: "https://www.yelp.com/biz/aunty-sandys-banana-bread-keanae-2", igUrl: "https://www.instagram.com/explore/tags/auntysandysbananabread/", ttUrl: "https://www.tiktok.com/search?q=aunty%20sandys%20banana%20bread" },
                     { time: "Stop 3", title: "Wai'ānapanapa State Park", description: "Stunning black sand + waves [MAKE RESERVATIONS].", longDescription: "Home to a stunning black sand beach, sea caves, and a dramatic volcanic coastline. This is a major highlight of the drive, offering incredible photo opportunities and a chance to see a different side of Maui's natural beauty. Reservations are a must!", icon: "🏖️", search: "Wai'ānapanapa State Park", yUrl: "https://www.yelp.com/biz/waianapanapa-state-park-hana", igUrl: "https://www.instagram.com/explore/tags/waianapanapastatepark/", ttUrl: "https://www.tiktok.com/search?q=waianapanapa%20state%20park" },
-                    { time: "Stop 4", title: "Pua'a Ka'a Falls", description: "Waterfall swim stop.", longDescription: "The perfect spot for a refreshing afternoon dip. This wayside park has a beautiful waterfall and a natural swimming hole, offering a cool break from our drive.", icon: "💧", search: "Pua'a Ka'a State Wayside Park", yUrl: "https://www.yelp.com/biz/puaa-kaa-state-wayside-park-haiku", igUrl: "https://www.instagram.com/explore/tags/puaakaafalls/", ttUrl: "https://www.tiktok.com/search?q=puaa%20kaa%20falls" },
+                    { time: "Stop 4", title: "Pua'a Ka'a Falls", description: "Waterfall swim stop.", longDescription: "The perfect spot for a refreshing afternoon dip. This wayside park has a beautiful waterfall and a natural swimming hole, offering a cool break from our drive.", icon: "�", search: "Pua'a Ka'a State Wayside Park", yUrl: "https://www.yelp.com/biz/puaa-kaa-state-wayside-park-haiku", igUrl: "https://www.instagram.com/explore/tags/puaakaafalls/", ttUrl: "https://www.tiktok.com/search?q=puaa%20kaa%20falls" },
                     { time: "Stop 5", title: "Wailua Falls", description: "Final scenic stop.", longDescription: "One of the most photographed waterfalls on Maui, and for good reason. It's easily accessible from the road and offers a spectacular view of a powerful, cascading waterfall surrounded by lush greenery.", icon: "📸", search: "Wailua Falls Maui", yUrl: "https://www.yelp.com/biz/wailua-falls-hana", igUrl: "https://www.instagram.com/explore/tags/wailuafallsmaui/", ttUrl: "https://www.tiktok.com/search?q=wailua%20falls%20maui" },
                     { time: "Snacks", title: "Coconut Glen's & Hana Farms", description: "Vegan coconut ice cream & local fruit.", longDescription: "A sweet treat to cap off our Hana adventure. Coconut Glen's is famous for its delicious and unique vegan ice cream served in a coconut shell. Hana Farms is another great stop for local snacks and baked goods.", icon: "🥥", search: "Coconut Glen's Maui", yUrl: "https://www.yelp.com/biz/coconut-glens-ice-cream-nahiku", igUrl: "https://www.instagram.com/coconutglens/", ttUrl: "https://www.tiktok.com/search?q=coconut%20glens%20maui" },
                     { time: "6:00 PM", title: "Return to Kihei", description: "Arrive back at the condo.", longDescription: "Heading back to our home base after a full day of adventure. Time to relax, recharge, and get ready for another day in paradise.", icon: "🌙" },
@@ -330,9 +335,8 @@
                 title: "Saturday, Oct 11 – Snorkel + West Maui Sunset",
                 special: "snorkel",
                 items: [
-                    { time: "6:30 AM", title: "Molokini & Turtle Town Snorkel", description: "Half-day raft tour with vibrant coral and sea turtles.", longDescription: "An early start for an unforgettable snorkeling adventure. We're heading out to the Molokini Crater, a volcanic caldera teeming with vibrant coral and marine life, followed by a stop at Turtle Town to swim with the honu (sea turtles).", icon: "�", search: "Molokini Snorkel Tour Maalaea Harbor" },
+                    { time: "6:30 AM", title: "Molokini & Turtle Town Snorkel", description: "Half-day raft tour with vibrant coral and sea turtles.", longDescription: "An early start for an unforgettable snorkeling adventure. We're heading out to the Molokini Crater, a volcanic caldera teeming with vibrant coral and marine life, followed by a stop at Turtle Town to swim with the honu (sea turtles).", icon: "🐢", search: "Molokini Snorkel Tour Maalaea Harbor" },
                     { time: "12:30 PM", title: "South Maui Fish Co.", description: "Legendary poke plates and grilled fish.", longDescription: "After a morning in the water, we'll refuel at this top-rated food truck. Known for its incredibly fresh poke bowls and grilled fish tacos, it's the perfect post-snorkeling lunch.", icon: "🐠", search: "South Maui Fish Co. Kihei", yUrl: "https://www.yelp.com/biz/south-maui-fish-co-kihei", igUrl: "https://www.instagram.com/southmauifishco/", ttUrl: "https://www.tiktok.com/search?q=south%20maui%20fish%20company" },
-                    { time: "2:00 PM", title: "Scenic Drive to Kapalua", description: "Soak in winding coastal roads and ocean panoramas.", longDescription: "A beautiful coastal drive up to West Maui, with stunning views of the ocean and neighboring islands. We'll take our time and enjoy the scenery before our sunset dinner.", icon: "🚗" },
                     { time: "5:15 PM", title: "Merriman's Kapalua", description: "Sunset oceanfront dinner with a view of dreams.", longDescription: "The grand finale of our day. Merriman's offers one of the best sunset dinner views on the island, with an incredible farm-to-table menu. It's the perfect spot for a memorable evening.", icon: "🌅", search: "Merriman's Kapalua", yUrl: "https://www.yelp.com/biz/merrimans-kapalua-lahaina", igUrl: "https://www.instagram.com/merrimansmaui/", ttUrl: "https://www.tiktok.com/search?q=merrimans%20kapalua" },
                 ]
             },
@@ -348,7 +352,6 @@
             },
             day13: {
                 title: "Monday, Oct 13 – Upcountry Maui",
-                special: "lavender",
                 items: [
                     { time: "9:00 AM", title: "La Provence", description: "Charming French café with croissants and a view.", longDescription: "A charming French café in the heart of Upcountry. We'll enjoy delicious pastries and coffee with beautiful views of the island.", icon: "🥐", search: "La Provence Kula", yUrl: "https://www.yelp.com/biz/la-provence-kula-2", igUrl: "https://www.instagram.com/explore/tags/laprovencekula/", ttUrl: "https://www.tiktok.com/search?q=la%20provence%20kula%20maui" },
                     { time: "10:30 AM", title: "Ali'i Kula Lavender Farm", description: "Stroll through peaceful gardens with scenic vistas.", longDescription: "A peaceful and fragrant escape. We'll wander through the beautiful lavender fields, enjoy the stunning bi-coastal views, and maybe even try a lavender scone.", icon: "💜", search: "Ali'i Kula Lavender Farm", yUrl: "https://www.yelp.com/biz/alii-kula-lavender-farm-kula", igUrl: "https://www.instagram.com/aliikulalavender/", ttUrl: "https://www.tiktok.com/search?q=alii%20kula%20lavender%20farm" },
@@ -430,15 +433,25 @@
         const instagramLink = document.getElementById('instagram-link');
         const tiktokLink = document.getElementById('tiktok-link');
 
+        let activeScrollTrigger;
+        let activeObserver;
+
         function showContent(key) {
+            if (activeScrollTrigger) {
+                activeScrollTrigger.kill();
+            }
+            if (activeObserver) {
+                activeObserver.disconnect();
+            }
+
             contentDisplay.innerHTML = '';
             const data = itineraryData[key];
             const card = document.createElement('div');
             card.className = 'content-card p-6 md:p-8 rounded-2xl shadow-lg';
-            let contentHTML = `<h2 class="text-3xl font-bold text-gray-800 mb-6">${data.title}</h2>`;
+            let contentHTML = `<h2 class="text-3xl font-bold text-gray-800 mb-6 scroll-animate">${data.title}</h2>`;
 
             if (data.special === 'hana') {
-                contentHTML += `<div class="relative w-full h-16 bg-gray-200 rounded-lg overflow-hidden mb-6">
+                contentHTML += `<div class="relative w-full h-16 bg-gray-200 rounded-lg overflow-hidden mb-6 scroll-animate">
                     <div class="absolute top-0 left-0 w-full h-full">
                         <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 900 64">
                             <path d="M900,32 C800,64 700,0 600,32 S400,64 300,32 S100,0 0,32" stroke="#a7f3d0" stroke-width="4" fill="none" />
@@ -453,7 +466,7 @@
                 data.items.forEach((p, index) => {
                     const amazonUrl = `https://www.amazon.com/s?k=${encodeURIComponent(p.amazonSearchTerm)}&rh=p_76%3A1250221011`;
                     contentHTML += `
-                    <div class="packing-item flex items-center bg-gray-50 p-3 rounded-lg">
+                    <div class="packing-item flex items-center bg-gray-50 p-3 rounded-lg scroll-animate">
                         <input type="checkbox" id="item-${index}" class="h-5 w-5 rounded border-gray-300 text-cyan-600 focus:ring-cyan-500 mr-4">
                         <label for="item-${index}" class="flex-grow packing-label">
                             <span class="font-semibold text-gray-700">${p.item}</span>
@@ -465,10 +478,10 @@
                 contentHTML += '</div>';
             } else if (key === 'flights') {
                  data.passengers.forEach(person => {
-                    contentHTML += `<h3 class="text-2xl font-bold text-gray-800 mb-4 mt-6">${person.name}</h3>`;
+                    contentHTML += `<h3 class="text-2xl font-bold text-gray-800 mb-4 mt-6 scroll-animate">${person.name}</h3>`;
                     person.flights.forEach(flight => {
                         contentHTML += `
-                        <a href="https://www.google.com/search?q=${flight.airline} ${flight.flightNum}" target="_blank" class="block ticket-link">
+                        <a href="https://www.google.com/search?q=${flight.airline} ${flight.flightNum}" target="_blank" class="block ticket-link scroll-animate">
                             <div class="ticket">
                                 <div class="ticket-main">
                                     <div class="flex justify-between items-center mb-4">
@@ -508,16 +521,16 @@
                     let clickableAttrs = '';
                     if (item.search) {
                         clickableAttrs = `
-                            data-title="${item.title.replace(/"/g, '&quot;')}" 
-                            data-search="${item.search.replace(/"/g, '&quot;')}" 
+                            data-title="${item.title.replace(/"/g, '"')}" 
+                            data-search="${item.search.replace(/"/g, '"')}" 
                             data-yurl="${item.yUrl || ''}"
                             data-igurl="${item.igUrl || ''}"
                             data-tturl="${item.ttUrl || ''}"
-                            data-description="${(item.longDescription || item.description).replace(/"/g, '&quot;')}"
+                            data-description="${(item.longDescription || item.description).replace(/"/g, '"')}"
                         `;
                     }
 
-                    contentHTML += `<div class="${clickableClass}" ${clickableAttrs}>
+                    contentHTML += `<div class="scroll-animate ${clickableClass}" ${clickableAttrs}>
                         <div class="relative pl-10">
                             <div class="absolute -left-1 top-1 h-8 w-8 rounded-full bg-cyan-500 flex items-center justify-center text-white text-lg ring-4 ring-white timeline-icon">${item.icon}</div>
                             <p class="text-sm font-semibold text-cyan-600">${item.time}</p>
@@ -553,9 +566,6 @@
             if (data.special === 'snorkel') {
                 createFloatingItems([], 'bubble');
             }
-            if (data.special === 'lavender') {
-                createFloatingItems(['💜'], 'floating-emoji');
-            }
             if (data.special === 'market') {
                 createFloatingItems(['🍓', '🍍', '🥥', '🌺'], 'floating-emoji');
             }
@@ -574,7 +584,42 @@
                 });
             });
 
-            setTimeout(() => card.classList.add('active'), 50);
+            setTimeout(() => {
+                card.classList.add('active');
+                
+                // GSAP ScrollTrigger for Hana page
+                if (data.special === 'hana') {
+                    gsap.registerPlugin(ScrollTrigger);
+                    activeScrollTrigger = ScrollTrigger.create({
+                        trigger: ".content-card",
+                        start: "top top",
+                        end: "bottom bottom",
+                        scrub: true,
+                        animation: gsap.to(".road-to-hana-car", {
+                            offsetDistance: "100%",
+                            ease: "none"
+                        }),
+                    });
+                }
+
+                // Intersection Observer for scroll animations
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach((entry, index) => {
+                        if (entry.isIntersecting) {
+                            setTimeout(() => {
+                                entry.target.classList.add('visible');
+                            }, index * 100); // Staggered delay
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                document.querySelectorAll('.scroll-animate').forEach(el => {
+                    observer.observe(el);
+                });
+                activeObserver = observer;
+
+            }, 50);
+
             document.querySelectorAll('.day-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`button[onclick="showContent('${key}')"]`).classList.add('active');
         }
@@ -604,6 +649,17 @@
         }
 
         window.onload = () => {
+            gsap.registerPlugin(ScrollTrigger);
+            gsap.to("header", {
+                scrollTrigger: {
+                    trigger: "body",
+                    start: "top top",
+                    end: "bottom top",
+                    scrub: true
+                },
+                y: 200,
+                ease: "none"
+            });
             showContent('flights');
         };
     </script>
