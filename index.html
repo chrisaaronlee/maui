@@ -49,7 +49,7 @@
         .packing-item label {
             transition: all 0.3s ease;
         }
-        .packing-item input:checked + label {
+        .packing-item input:checked + .packing-label {
             text-decoration: line-through;
             color: #9ca3af;
         }
@@ -194,10 +194,10 @@
                     <button onclick="showContent('flights')" class="day-btn text-center flex flex-col justify-center items-center p-4 rounded-lg shadow-md hover:bg-sky-100 flex-shrink-0 w-36 lg:w-full lg:text-left lg:items-start">
                          <span class="font-bold text-sky-700">Flights</span>
                     </button>
-                    <button onclick="showContent('packing')" class="day-btn text-center flex flex-col justify-center items-center p-4 rounded-lg shadow-md hover:bg-amber-100 flex-shrink-0 w-36 lg:w-full lg:text-left lg:items-start">
+                    <button onclick="showContent('packing')" class="day-btn text-center flex flex-col justify-center items-center p-4 rounded-lg shadow-md hover:bg-amber-100 active flex-shrink-0 w-36 lg:w-full lg:text-left lg:items-start">
                          <span class="font-bold text-amber-700">Packing List</span>
                     </button>
-                    <button onclick="showContent('day8')" class="day-btn text-center flex flex-col justify-center items-center p-4 rounded-lg shadow-md hover:bg-cyan-100 active flex-shrink-0 w-36 lg:w-full lg:text-left lg:items-start">
+                    <button onclick="showContent('day8')" class="day-btn text-center flex flex-col justify-center items-center p-4 rounded-lg shadow-md hover:bg-cyan-100 flex-shrink-0 w-36 lg:w-full lg:text-left lg:items-start">
                         <span class="font-bold">Oct 8</span> <span class="text-gray-600 text-sm block">Arrival</span>
                     </button>
                     <button onclick="showContent('day9')" class="day-btn text-center flex flex-col justify-center items-center p-4 rounded-lg shadow-md hover:bg-cyan-100 flex-shrink-0 w-36 lg:w-full lg:text-left lg:items-start">
@@ -369,19 +369,19 @@
             packing: {
                 title: "Interactive Packing List",
                 items: [
-                    { item: "Sunglasses", note: "Polarized recommended" },
-                    { item: "Swimwear x2", note: "For beach, snorkeling, pool" },
-                    { item: "Hat", note: "Sun protection" },
-                    { item: "Reef-safe Sunscreen", note: "Required by law in Hawaii" },
-                    { item: "Flip-flops / Sandals", note: "For general wear" },
-                    { item: "Comfortable walking shoes", note: "For hikes and exploration" },
-                    { item: "Light jacket / sweater", note: "Evenings can get breezy" },
-                    { item: "Camera or smartphone", note: "For all the memories" },
-                    { item: "Packable beach towel", note: "Not always available at beaches" },
-                    { item: "Reusable water bottle", note: "Stay hydrated!" },
-                    { item: "Packable tote/beach bag", note: "For markets and beach gear" },
-                    { item: "Toiletries", note: "Don't forget after-sun lotion!" },
-                    { item: "Undergarments & socks", note: "Bring extras!" },
+                    { item: "Sunglasses", note: "Polarized recommended", amazonSearchTerm: "polarized sunglasses" },
+                    { item: "Swimwear x2", note: "For beach, snorkeling, pool", amazonSearchTerm: "swimwear" },
+                    { item: "Hat", note: "Sun protection", amazonSearchTerm: "sun hat" },
+                    { item: "Reef-safe Sunscreen", note: "Required by law in Hawaii", amazonSearchTerm: "reef safe sunscreen" },
+                    { item: "Flip-flops / Sandals", note: "For general wear", amazonSearchTerm: "sandals" },
+                    { item: "Comfortable walking shoes", note: "For hikes and exploration", amazonSearchTerm: "walking shoes" },
+                    { item: "Light jacket / sweater", note: "Evenings can get breezy", amazonSearchTerm: "light jacket" },
+                    { item: "Camera or smartphone", note: "For all the memories", amazonSearchTerm: "waterproof phone case" },
+                    { item: "Packable beach towel", note: "Not always available at beaches", amazonSearchTerm: "packable beach towel" },
+                    { item: "Reusable water bottle", note: "Stay hydrated!", amazonSearchTerm: "reusable water bottle" },
+                    { item: "Packable tote/beach bag", note: "For markets and beach gear", amazonSearchTerm: "packable beach bag" },
+                    { item: "Toiletries", note: "Don't forget after-sun lotion!", amazonSearchTerm: "travel toiletries" },
+                    { item: "Undergarments & socks", note: "Bring extras!", amazonSearchTerm: "socks" },
                 ]
             },
             farmersMarkets: {
@@ -390,7 +390,7 @@
                 items: [
                     { time: "Mon-Sat, 8AM-4PM", title: "Farmers Market Maui – Kihei", description: "Neighborhood market with fruits, smoothies, and local crafts.", longDescription: "A great neighborhood market close to the condo. Perfect for picking up fresh tropical fruits, smoothies, and locally made crafts.", icon: "🍓", search: "Farmers Market Maui Kihei", yUrl: "https://www.yelp.com/biz/farmers-market-maui-kihei", igUrl: "https://www.instagram.com/explore/tags/farmersmarketmaui/", ttUrl: "https://www.tiktok.com/search?q=farmers%20market%20maui%20kihei" },
                     { time: "Tuesdays, 8AM-11AM", title: "Wailea Village Farmers Market", description: "Upscale artisan market with baked goods, flowers, and boutique foods.", longDescription: "An upscale artisan market with a great selection of baked goods, local flowers, and boutique foods. A fun place to browse and pick up some unique souvenirs.", icon: "🌺", search: "Wailea Village Farmers Market", yUrl: "https://www.yelp.com/biz/wailea-village-farmers-market-wailea" },
-                    { time: "Mon/Wed/Fri, 8AM-12PM", title: "Maui Nui Farmers Market - Kahului", description: "Local favorite for fresh produce and tropical fruits.", longDescription: "A true local's market. This is the place to go for the freshest produce and tropical fruits at great prices.", icon: "🍍", search: "Maui Nui Farmers Market Kahului", yUrl: "https://www.yelp.com/biz/maui-nui-farmers-market-kahului" },
+                    { time: "Mon/Wed/Fri, 8AM-12PM", title: "Maui Nui Farmers Market - Kahului", description: "Local favorite for fresh produce and tropical fruits.", longDescription: "A true local's market. This is the place to go for the freshest produce and tropical fruits at great prices.", icon: "�", search: "Maui Nui Farmers Market Kahului", yUrl: "https://www.yelp.com/biz/maui-nui-farmers-market-kahului" },
                     { time: "Open daily, 9AM-4PM", title: "Kula Country Farms Farm Stand", description: "Scenic upcountry stop with strawberry-picking and local jams.", longDescription: "A scenic upcountry stop with incredible views. They offer strawberry-picking (in season), delicious local jams, and the famous Hana swirl ice cream.", icon: "🚜", search: "Kula Country Farms Kula", yUrl: "https://www.yelp.com/biz/kula-country-farms-kula", igUrl: "https://www.instagram.com/kulacountryfarms/", ttUrl: "https://www.tiktok.com/search?q=kula%20country%20farms" },
                     { time: "Wed & Sat, 8AM-12PM", title: "Napili Farmers Market - Lahaina", description: "Smoothie bowls, fruit juices, and organic produce.", longDescription: "A great little market in West Maui. Perfect for grabbing a smoothie bowl or some fresh fruit juice before a beach day in Kapalua.", icon: "🥥", search: "Napili Farmers Market Lahaina", yUrl: "https://www.yelp.com/biz/napili-farmers-market-lahaina" },
                 ]
@@ -445,7 +445,16 @@
             if (key === 'packing') {
                 contentHTML += '<div class="space-y-4">';
                 data.items.forEach((p, index) => {
-                    contentHTML += `<div class="packing-item flex items-center bg-gray-50 p-3 rounded-lg"><input type="checkbox" id="item-${index}" class="h-5 w-5 rounded border-gray-300 text-cyan-600 focus:ring-cyan-500 mr-4"><label for="item-${index}" class="flex-grow"><span class="font-semibold text-gray-700">${p.item}</span><span class="text-sm text-gray-500 block">${p.note}</span></label></div>`;
+                    const amazonUrl = `https://www.amazon.com/s?k=${encodeURIComponent(p.amazonSearchTerm)}&rh=p_76%3A1250221011`;
+                    contentHTML += `
+                    <div class="packing-item flex items-center bg-gray-50 p-3 rounded-lg">
+                        <input type="checkbox" id="item-${index}" class="h-5 w-5 rounded border-gray-300 text-cyan-600 focus:ring-cyan-500 mr-4">
+                        <label for="item-${index}" class="flex-grow packing-label">
+                            <span class="font-semibold text-gray-700">${p.item}</span>
+                            <span class="text-sm text-gray-500 block">${p.note}</span>
+                        </label>
+                        <a href="${amazonUrl}" target="_blank" class="bg-yellow-400 text-gray-900 font-bold text-xs px-3 py-1 rounded-full hover:bg-yellow-500 transition-colors">🛒 Shop Prime</a>
+                    </div>`;
                 });
                 contentHTML += '</div>';
             } else if (key === 'flights') {
@@ -594,3 +603,4 @@
     </script>
 </body>
 </html>
+�
