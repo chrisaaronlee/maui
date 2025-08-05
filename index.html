@@ -30,6 +30,22 @@
             position: relative;
             overflow: hidden;
         }
+        .hana-card {
+            background-color: transparent;
+            backdrop-filter: none;
+            padding: 0;
+        }
+        .hana-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url('https://images.unsplash.com/photo-1594361593358-439b8c1a4a8c?q=80&w=1887&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+        }
         .day-btn.active {
             background-color: #0077be;
             color: white;
@@ -56,7 +72,6 @@
             position: absolute;
             z-index: 20;
             font-size: 2.5rem;
-            transform: rotate(90deg);
         }
         .modal-overlay { transition: opacity 0.3s ease; }
         .modal-content { transition: transform 0.3s ease, opacity 0.3s ease; }
@@ -291,7 +306,7 @@
                     { time: "Stop 1", title: "Twin Falls", description: "Quick waterfall hike.", longDescription: "Our first taste of the Road to Hana's beauty. This is an easily accessible stop with a short jungle walk to a beautiful waterfall. It's the perfect place to stretch our legs and grab some fresh fruit from the farm stand.", icon: "🏞️", search: "Twin Falls Maui", yUrl: "https://www.yelp.com/biz/twin-falls-trail-haiku", igUrl: "https://www.instagram.com/explore/tags/twinfallsmaui/", ttUrl: "https://www.tiktok.com/search?q=twin%20falls%20maui" },
                     { time: "Stop 2", title: "Aunty Sandy's", description: "Famous for banana bread.", longDescription: "You can't do the Road to Hana without stopping for Aunty Sandy's. This iconic spot on the Ke'anae Peninsula serves up warm, fresh-baked banana bread that's famous across the island.", icon: "🍞", search: "Aunty Sandy's Banana Bread Maui", yUrl: "https://www.yelp.com/biz/aunty-sandys-banana-bread-keanae-2", igUrl: "https://www.instagram.com/explore/tags/auntysandysbananabread/", ttUrl: "https://www.tiktok.com/search?q=aunty%20sandys%20banana%20bread" },
                     { time: "Stop 3", title: "Wai'ānapanapa State Park", description: "Stunning black sand + waves [MAKE RESERVATIONS].", longDescription: "Home to a stunning black sand beach, sea caves, and a dramatic volcanic coastline. This is a major highlight of the drive, offering incredible photo opportunities and a chance to see a different side of Maui's natural beauty. Reservations are a must!", icon: "🏖️", search: "Wai'ānapanapa State Park", yUrl: "https://www.yelp.com/biz/waianapanapa-state-park-hana", igUrl: "https://www.instagram.com/explore/tags/waianapanapastatepark/", ttUrl: "https://www.tiktok.com/search?q=waianapanapa%20state%20park" },
-                    { time: "Stop 4", title: "Pua'a Ka'a Falls", description: "Waterfall swim stop.", longDescription: "The perfect spot for a refreshing afternoon dip. This wayside park has a beautiful waterfall and a natural swimming hole, offering a cool break from our drive.", icon: "�", search: "Pua'a Ka'a State Wayside Park", yUrl: "https://www.yelp.com/biz/puaa-kaa-state-wayside-park-haiku", igUrl: "https://www.instagram.com/explore/tags/puaakaafalls/", ttUrl: "https://www.tiktok.com/search?q=puaa%20kaa%20falls" },
+                    { time: "Stop 4", title: "Pua'a Ka'a Falls", description: "Waterfall swim stop.", longDescription: "The perfect spot for a refreshing afternoon dip. This wayside park has a beautiful waterfall and a natural swimming hole, offering a cool break from our drive.", icon: "💧", search: "Pua'a Ka'a State Wayside Park", yUrl: "https://www.yelp.com/biz/puaa-kaa-state-wayside-park-haiku", igUrl: "https://www.instagram.com/explore/tags/puaakaafalls/", ttUrl: "https://www.tiktok.com/search?q=puaa%20kaa%20falls" },
                     { time: "Stop 5", title: "Wailua Falls", description: "Final scenic stop.", longDescription: "One of the most photographed waterfalls on Maui, and for good reason. It's easily accessible from the road and offers a spectacular view of a powerful, cascading waterfall surrounded by lush greenery.", icon: "📸", search: "Wailua Falls Maui", yUrl: "https://www.yelp.com/biz/wailua-falls-hana", igUrl: "https://www.instagram.com/explore/tags/wailuafallsmaui/", ttUrl: "https://www.tiktok.com/search?q=wailua%20falls%20maui" },
                     { time: "Snacks", title: "Coconut Glen's & Hana Farms", description: "Vegan coconut ice cream & local fruit.", longDescription: "A sweet treat to cap off our Hana adventure. Coconut Glen's is famous for its delicious and unique vegan ice cream served in a coconut shell. Hana Farms is another great stop for local snacks and baked goods.", icon: "🥥", search: "Coconut Glen's Maui", yUrl: "https://www.yelp.com/biz/coconut-glens-ice-cream-nahiku", igUrl: "https://www.instagram.com/coconutglens/", ttUrl: "https://www.tiktok.com/search?q=coconut%20glens%20maui" },
                     { time: "6:00 PM", title: "Return to Kihei", description: "Arrive back at the condo.", longDescription: "Heading back to our home base after a full day of adventure. Time to relax, recharge, and get ready for another day in paradise.", icon: "🌙" },
@@ -427,17 +442,48 @@
             const data = itineraryData[key];
             const card = document.createElement('div');
             card.className = 'content-card p-6 md:p-8 rounded-2xl shadow-lg';
+            if (data.special === 'hana') {
+                card.classList.add('hana-card');
+            }
             let contentHTML = `<h2 class="text-3xl font-bold text-gray-800 mb-6 scroll-animate">${data.title}</h2>`;
 
             if (data.isMap) {
                 contentHTML += `<iframe src="https://www.google.com/maps/d/u/0/embed?mid=1usOiJSmLDU0Pb7yOJQ0oKX05e1r_CwI" width="100%" height="480" class="rounded-lg shadow-md"></iframe>`;
             } else if (data.special === 'hana') {
-                contentHTML += `<div class="relative w-full h-auto" style="padding-bottom: 200%;">
-                    <svg class="absolute top-0 left-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 1300">
-                        <path id="road-path" d="M 50 20 C 150 100, 0 200, 50 300 S 150 400, 50 500 S 0 600, 50 700 S 150 800, 50 900 S 0 1000, 50 1100 S 150 1200, 50 1300" stroke="#a7f3d0" stroke-width="8" fill="none" />
-                    </svg>
-                    <div class="road-to-hana-car text-3xl">🚙</div>
-                </div>`;
+                contentHTML = `<div class="hana-background"></div>
+                    <div class="relative z-10 p-6 md:p-8">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-6 scroll-animate">${data.title}</h2>
+                        <div class="relative w-full h-auto" style="min-height: 1500px;">
+                            <svg class="absolute top-0 left-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 1300">
+                                <path id="road-path" d="M 50 20 C 150 100, 0 200, 50 300 S 150 400, 50 500 S 0 600, 50 700 S 150 800, 50 900 S 0 1000, 50 1100 S 150 1200, 50 1300" stroke="rgba(167, 243, 208, 0.7)" stroke-width="8" fill="none" />
+                            </svg>
+                            <div class="road-to-hana-car text-3xl">🚙</div>
+                            <div class="space-y-24 relative z-20">
+                                ${data.items.map(item => {
+                                    const clickableClass = item.search ? 'itinerary-item-clickable' : '';
+                                    let clickableAttrs = '';
+                                    if (item.search) {
+                                        clickableAttrs = `
+                                            data-title="${item.title.replace(/"/g, '"')}" 
+                                            data-search="${item.search.replace(/"/g, '"')}" 
+                                            data-yurl="${item.yUrl || ''}"
+                                            data-igurl="${item.igUrl || ''}"
+                                            data-tturl="${item.ttUrl || ''}"
+                                            data-description="${(item.longDescription || item.description).replace(/"/g, '"')}"
+                                        `;
+                                    }
+                                    return `<div class="scroll-animate ${clickableClass}" ${clickableAttrs}>
+                                        <div class="relative pl-10">
+                                            <div class="absolute -left-1 top-1 h-8 w-8 rounded-full bg-cyan-500 flex items-center justify-center text-white text-lg ring-4 ring-white timeline-icon">${item.icon}</div>
+                                            <p class="text-sm font-semibold text-cyan-600">${item.time}</p>
+                                            <h3 class="text-xl font-bold text-gray-800">${item.title}</h3>
+                                            <p class="text-gray-600">${item.description}</p>
+                                        </div>
+                                    </div>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>`;
             } else if (data.isGame) {
                 contentHTML += `
                 <div class="game-container p-4 rounded-lg">
@@ -590,6 +636,16 @@
                 // GSAP ScrollTrigger for Hana page
                 if (data.special === 'hana') {
                     gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
+                    gsap.to(".hana-background", {
+                        backgroundPosition: "50% 100%",
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: ".content-card",
+                            start: "top top",
+                            end: "bottom bottom",
+                            scrub: true
+                        }
+                    });
                     activeScrollTrigger = ScrollTrigger.create({
                         trigger: ".content-card",
                         start: "top top",
@@ -835,4 +891,3 @@
     </script>
 </body>
 </html>
-�
