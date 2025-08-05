@@ -7,14 +7,15 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Pacifico&family=Kaushan+Script&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            /* Set the background image with a fallback color */
-            background-color: #60a5fa; /* Fallback blue color */
+            background-color: #60a5fa;
             background-image: url('https://i.imgur.com/zJOV1Ys.png');
             background-size: cover;
             background-position: center;
@@ -24,17 +25,10 @@
             font-family: 'Pacifico', cursive;
         }
         .content-card {
-            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-            opacity: 0;
-            transform: translateY(20px);
             background-color: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
-        }
-        .content-card.active {
-            opacity: 1;
-            transform: translateY(0);
         }
         .day-btn.active {
             background-color: #0077be;
@@ -44,15 +38,15 @@
             animation: pulse 2s infinite;
         }
         .flights-btn.active {
-            background-color: #0ea5e9; /* Brighter sky blue */
+            background-color: #0ea5e9;
         }
         .day-btn {
             transition: all 0.3s ease;
              background-color: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(10px);
         }
-        .packing-item label {
-            transition: all 0.3s ease;
+        .day-btn:hover {
+            transform: translateY(-3px);
         }
         .packing-item input:checked + .packing-label {
             text-decoration: line-through;
@@ -60,40 +54,19 @@
         }
         .road-to-hana-car {
             position: absolute;
-            offset-path: path("M900,32 C800,64 700,0 600,32 S400,64 300,32 S100,0 0,32");
-            offset-rotate: 0deg; /* Keep car upright */
-            transform: scaleX(-1); /* Flip the car horizontally */
+            offset-path: path("M 50 20 C 150 100, 0 200, 50 300 S 150 400, 50 500 S 0 600, 50 700 S 150 800, 50 900 S 0 1000, 50 1100 S 150 1200, 50 1300");
+            offset-rotate: 90deg;
+            transform: translateX(-50%) translateY(-50%);
         }
-        .modal-overlay {
-            transition: opacity 0.3s ease;
-        }
-        .modal-content {
-            transition: transform 0.3s ease, opacity 0.3s ease;
-        }
-        .itinerary-item-clickable {
-            cursor: pointer;
-            transition: background-color: 0.2s ease;
-        }
-        .itinerary-item-clickable:hover {
-            background-color: rgba(249, 250, 251, 0.5);
-        }
-        .header-text {
-             text-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        /* Hide scrollbar for the horizontal nav */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
-        .logo-link img {
-            transition: transform 0.2s ease-in-out;
-        }
-        .logo-link:hover img {
-            transform: scale(1.1);
-        }
+        .modal-overlay { transition: opacity 0.3s ease; }
+        .modal-content { transition: transform 0.3s ease, opacity 0.3s ease; }
+        .itinerary-item-clickable { cursor: pointer; transition: background-color: 0.2s ease; }
+        .itinerary-item-clickable:hover { background-color: rgba(249, 250, 251, 0.5); }
+        .header-text { text-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .logo-link img { transition: transform 0.2s ease-in-out; }
+        .logo-link:hover img { transform: scale(1.1); }
         .ticket {
             background: white;
             border-radius: 1rem;
@@ -107,10 +80,7 @@
             transform: translateY(-5px);
             box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
         }
-        .ticket-main {
-            padding: 1rem;
-            flex-grow: 1;
-        }
+        .ticket-main { padding: 1rem; flex-grow: 1; }
         .ticket-rip {
             width: 4rem;
             border-left: 2px dashed #e5e7eb;
@@ -121,70 +91,70 @@
             position: absolute;
             width: 1.5rem;
             height: 1.5rem;
-            background: rgba(243, 244, 246, 0.85); /* Match transparent card bg */
+            background: rgba(243, 244, 246, 0.85);
             border-radius: 50%;
             left: -0.75rem;
         }
-        .ticket-rip::before {
-            top: -0.75rem;
+        .ticket-rip::before { top: -0.75rem; }
+        .ticket-rip::after { bottom: -0.75rem; }
+        .airline-logo { max-height: 1.5rem; width: auto; }
+        @keyframes pulse { 0%, 100% { transform: scale(1.05); } 50% { transform: scale(1.08); } }
+        .timeline-icon { animation: bounce-in 0.6s ease; transition: transform 0.2s ease; }
+        .itinerary-item-clickable:hover .timeline-icon { transform: scale(1.2) rotate(10deg); }
+        @keyframes bounce-in { 0% { transform: scale(0.5); opacity: 0; } 70% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); } }
+        .bubble, .floating-emoji { position: absolute; bottom: -30px; animation: rise 10s infinite ease-in; }
+        .bubble { background-color: rgba(255, 255, 255, 0.8); border-radius: 50%; }
+        .floating-emoji { font-size: 1.5rem; }
+        @keyframes rise { 0% { transform: translateY(0) translateX(0); opacity: 1; } 100% { transform: translateY(-100vh) translateX(20px); opacity: 0; } }
+        .scroll-animate { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .scroll-animate.visible { opacity: 1; transform: translateY(0); }
+        
+        /* Crash Out Game Styles */
+        .game-container {
+            background-color: #1e3a8a;
+            background-image: radial-gradient(circle, #2563eb 0%, #1e3a8a 70%);
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
-        .ticket-rip::after {
-            bottom: -0.75rem;
-        }
-        .airline-logo {
-            max-height: 1.5rem;
-            width: auto;
-        }
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1.05);
-            }
-            50% {
-                transform: scale(1.08);
-            }
-        }
-        .timeline-icon {
-            animation: bounce-in 0.6s ease;
-            transition: transform 0.2s ease;
-        }
-        .itinerary-item-clickable:hover .timeline-icon {
-            transform: scale(1.2);
-        }
-        @keyframes bounce-in {
-            0% { transform: scale(0.5); opacity: 0; }
-            70% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(1); }
-        }
-        .bubble, .floating-emoji {
+        .font-kaushan { font-family: 'Kaushan Script', cursive; }
+        #wheelContainer { position: relative; width: 350px; height: 350px; margin: 1rem auto; }
+        #wheel { width: 100%; height: 100%; }
+        #pointer {
             position: absolute;
-            bottom: -30px;
-            animation: rise 10s infinite ease-in;
+            left: 50%;
+            top: -10px;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            background: #ef4444;
+            clip-path: polygon(50% 100%, 0 0, 100% 0);
+            border-radius: 5px;
+            border: 3px solid white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            z-index: 10;
         }
-        .bubble {
-            background-color: rgba(255, 255, 255, 0.8); /* More pronounced */
-            border-radius: 50%;
+        .spin-button {
+            background-color: #22c55e;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+            border: 2px solid white;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3), inset 0 -3px 0 rgba(0,0,0,0.2);
+            text-transform: uppercase;
         }
-        .floating-emoji {
-            font-size: 1.5rem;
+        .spin-button:hover { background-color: #16a34a; }
+        .spin-button:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 3px -1px rgba(0,0,0,0.3), inset 0 2px 0 rgba(0,0,0,0.2);
         }
-        @keyframes rise {
-            0% {
-                transform: translateY(0) translateX(0);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100vh) translateX(20px);
-                opacity: 0;
-            }
-        }
-        .scroll-animate {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-        .scroll-animate.visible {
-            opacity: 1;
-            transform: translateY(0);
+        .spin-button:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+            border-color: #6b7280;
         }
     </style>
 </head>
@@ -197,14 +167,17 @@
             <p class="text-md text-gray-200 italic header-text" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.4);">"manifesting vibes, underestimating logistics"</p>
         </header>
 
-        <div class="flex flex-col lg:flex-row gap-8">
+        <div class="flex flex-col lg:flex-row gap-8 lg:items-start">
             <nav class="lg:w-1/4 lg:sticky lg:top-4 lg:self-start sticky top-0 z-10 py-2 bg-blue-500/30 lg:bg-transparent backdrop-blur-sm lg:backdrop-blur-none -mx-4 px-4 lg:mx-0 lg:px-0">
                 <h2 class="text-xl font-bold text-white mb-2 px-4 lg:px-0 header-text" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.4);">Navigation</h2>
                 <div class="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible no-scrollbar">
-                    <button onclick="showContent('flights')" class="day-btn flights-btn text-center flex flex-col justify-center items-center p-4 rounded-lg shadow-md hover:bg-sky-100 flex-shrink-0 w-36 lg:w-full lg:text-left lg:items-start">
+                    <button onclick="showContent('map')" class="day-btn text-center flex flex-col justify-center items-center p-4 rounded-lg shadow-md hover:bg-green-100 flex-shrink-0 w-36 lg:w-full lg:text-left lg:items-start">
+                         <span class="font-bold text-green-700">Map</span>
+                    </button>
+                    <button onclick="showContent('flights')" class="day-btn flights-btn text-center flex flex-col justify-center items-center p-4 rounded-lg shadow-md hover:bg-sky-100 active flex-shrink-0 w-36 lg:w-full lg:text-left lg:items-start">
                          <span class="font-bold text-sky-700">Flights</span>
                     </button>
-                    <button onclick="showContent('packing')" class="day-btn text-center flex flex-col justify-center items-center p-4 rounded-lg shadow-md hover:bg-amber-100 active flex-shrink-0 w-36 lg:w-full lg:text-left lg:items-start">
+                    <button onclick="showContent('packing')" class="day-btn text-center flex flex-col justify-center items-center p-4 rounded-lg shadow-md hover:bg-amber-100 flex-shrink-0 w-36 lg:w-full lg:text-left lg:items-start">
                          <span class="font-bold text-amber-700">Packing List</span>
                     </button>
                     <button onclick="showContent('day8')" class="day-btn text-center flex flex-col justify-center items-center p-4 rounded-lg shadow-md hover:bg-cyan-100 flex-shrink-0 w-36 lg:w-full lg:text-left lg:items-start">
@@ -240,6 +213,9 @@
                     <button onclick="showContent('restaurants')" class="day-btn text-center flex flex-col justify-center items-center p-4 rounded-lg shadow-md hover:bg-red-100 flex-shrink-0 w-36 lg:w-full lg:text-left lg:items-start">
                          <span class="font-bold text-red-700">Restaurants</span>
                     </button>
+                    <button onclick="showContent('crashOutGame')" class="day-btn text-center flex flex-col justify-center items-center p-4 rounded-lg shadow-md hover:bg-pink-100 flex-shrink-0 w-36 lg:w-full lg:text-left lg:items-start">
+                         <span class="font-bold text-pink-700">Crash Out Game</span>
+                    </button>
                 </div>
             </nav>
 
@@ -274,6 +250,10 @@
     
     <script>
         const itineraryData = {
+            map: {
+                title: "🗺️ Trip Map",
+                isMap: true
+            },
             flights: {
                 title: "✈️ Flight Info",
                 passengers: [
@@ -415,6 +395,10 @@
                     { time: "Closes by 2 PM", title: "Ichiban Okazuya – Wailuku", description: "Local-style lunch plates known for garlic chicken, miso butterfish, and grilled ahi. Great for lunch if you’re in Wailuku.", icon: "🍱", search: "Ichiban Okazuya Wailuku", yUrl: "https://www.yelp.com/biz/ichiban-okazuya-wailuku" },
                     { time: "Best for breakfast or early lunch", title: "Waikapū on 30 – Wailuku", description: "Local produce stand serving bentos, sandwiches, musubi & fresh smoothies. Popular with locals for grab-and-go.", icon: "🥪", search: "Waikapū on 30 Wailuku", yUrl: "https://www.yelp.com/biz/waikapu-on-30-wailuku" },
                 ]
+            },
+            crashOutGame: {
+                title: "Who's Gonna Crash Out?",
+                isGame: true
             }
         };
 
@@ -445,15 +429,32 @@
             card.className = 'content-card p-6 md:p-8 rounded-2xl shadow-lg';
             let contentHTML = `<h2 class="text-3xl font-bold text-gray-800 mb-6 scroll-animate">${data.title}</h2>`;
 
-            if (data.special === 'hana') {
-                contentHTML += `<div class="relative w-full h-16 bg-gray-200 rounded-lg overflow-hidden mb-6 scroll-animate">
-                    <div class="absolute top-0 left-0 w-full h-full">
-                        <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 900 64">
-                            <path d="M900,32 C800,64 700,0 600,32 S400,64 300,32 S100,0 0,32" stroke="#a7f3d0" stroke-width="4" fill="none" />
-                        </svg>
-                    </div>
-                    <div class="road-to-hana-car text-3xl">🚗</div>
+            if (data.isMap) {
+                contentHTML += `<iframe src="https://www.google.com/maps/d/u/0/embed?mid=1usOiJSmLDU0Pb7yOJQ0oKX05e1r_CwI" width="100%" height="480" class="rounded-lg shadow-md"></iframe>`;
+            } else if (data.special === 'hana') {
+                contentHTML += `<div class="relative w-full h-auto" style="padding-bottom: 200%;">
+                    <svg class="absolute top-0 left-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 1300">
+                        <path id="road-path" d="M 50 20 C 150 100, 0 200, 50 300 S 150 400, 50 500 S 0 600, 50 700 S 150 800, 50 900 S 0 1000, 50 1100 S 150 1200, 50 1300" stroke="#a7f3d0" stroke-width="8" fill="none" />
+                    </svg>
+                    <div class="road-to-hana-car text-3xl">🚙</div>
                 </div>`;
+            } else if (data.isGame) {
+                contentHTML += `
+                <div class="game-container p-4 rounded-lg">
+                     <header class="text-center mb-8">
+                        <h1 class="text-4xl md:text-5xl font-black tracking-tighter uppercase">Who's Gonna Crash Out?</h1>
+                        <p class="text-lg text-blue-200 mt-2">Spin the wheel to seal your fate!</p>
+                    </header>
+                    <div id="wheelContainer">
+                        <canvas id="wheel" width="500" height="500"></canvas>
+                        <div id="pointer"></div>
+                    </div>
+                    <div class="text-center">
+                        <button id="spinBtn" class="spin-button">Spin!</button>
+                    </div>
+                    <div id="result" class="mt-6 text-2xl font-bold text-amber-300 text-center h-8 transition-opacity duration-300 opacity-0"></div>
+                </div>
+                `;
             }
 
             if (key === 'packing') {
@@ -508,7 +509,7 @@
                         `;
                     });
                 });
-            } else {
+            } else if (data.items) {
                 contentHTML += '<div class="space-y-2">';
                 data.items.forEach(item => {
                     const clickableClass = item.search ? 'itinerary-item-clickable rounded-lg p-4 -ml-4' : 'p-4 -ml-4';
@@ -539,6 +540,10 @@
             
             card.innerHTML = contentHTML;
             contentDisplay.appendChild(card);
+            
+             if (data.isGame) {
+                initializeCrashOutGame();
+            }
             
             const createFloatingItems = (items, className) => {
                 for (let i = 0; i < 15; i++) {
@@ -584,14 +589,19 @@
                 
                 // GSAP ScrollTrigger for Hana page
                 if (data.special === 'hana') {
-                    gsap.registerPlugin(ScrollTrigger);
+                    gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
                     activeScrollTrigger = ScrollTrigger.create({
                         trigger: ".content-card",
                         start: "top top",
                         end: "bottom bottom",
                         scrub: true,
                         animation: gsap.to(".road-to-hana-car", {
-                            offsetDistance: "100%",
+                            motionPath: {
+                                path: "#road-path",
+                                align: "#road-path",
+                                alignOrigin: [0.5, 0.5],
+                                autoRotate: true
+                            },
                             ease: "none"
                         }),
                     });
@@ -642,6 +652,171 @@
                 reviewModal.classList.add('hidden');
             }, 300);
         }
+        
+        function initializeCrashOutGame() {
+            const canvas = document.getElementById('wheel');
+            const ctx = canvas.getContext('2d');
+            const spinBtn = document.getElementById('spinBtn');
+            const resultDiv = document.getElementById('result');
+
+            const segments = [
+                { color: '#ec4899', label: 'Chris' }, // Pink
+                { color: '#38bdf8', label: 'Jade' },  // Light Blue
+                { color: '#f97316', label: 'Tim' },   // Orange
+                { color: '#84cc16', label: 'Alex' }  // Lime
+            ];
+            
+            const resultPhrases = [
+                "is on meltdown watch!",
+                "is officially on the verge!",
+                "is spiraling!",
+                "is about to crash out!",
+                "needs a minute. Or ten."
+            ];
+
+            const segCount = segments.length;
+            const arcSize = (2 * Math.PI) / segCount;
+            const radius = canvas.width / 2;
+            const pegCount = segCount * 2; // Pegs on each segment line
+            const pegRadius = 8;
+            let currentAngle = 0;
+            let spinTimeout = null;
+            let spinArcStart = 10;
+            let spinTime = 0;
+            let timeElapsed = 0;
+            let spinTimeTotal = 0;
+            let lastTickAngle = 0;
+
+            // --- Tone.js Sound Setup ---
+            const tickSynth = new Tone.Synth({
+                oscillator: { type: 'sine', frequency: 440 },
+                envelope: { attack: 0.01, decay: 0.05, sustain: 0, release: 0.1 }
+            }).toDestination();
+            
+            const winSynth = new Tone.Synth({
+                oscillator: { type: 'triangle' },
+                envelope: { attack: 0.005, decay: 0.2, sustain: 0, release: 0.2 }
+            }).toDestination();
+
+            function playTick() {
+                if (Tone.context.state !== 'running') return;
+                tickSynth.triggerAttackRelease('C5', '32n');
+            }
+            
+            function playWin() {
+                if (Tone.context.state !== 'running') return;
+                winSynth.triggerAttackRelease('G5', '8n', Tone.now());
+                winSynth.triggerAttackRelease('C6', '8n', Tone.now() + 0.1);
+            }
+
+            function drawWheel() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw segments
+                for (let i = 0; i < segCount; i++) {
+                    const angle = currentAngle + i * arcSize;
+                    ctx.fillStyle = segments[i].color;
+
+                    ctx.beginPath();
+                    ctx.arc(radius, radius, radius - pegRadius - 5, angle, angle + arcSize, false);
+                    ctx.arc(radius, radius, 0, angle + arcSize, angle, true);
+                    ctx.fill();
+
+                    // Draw Text
+                    ctx.save();
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 40px Inter';
+                    ctx.textShadow = '2px 2px 2px #000';
+                    ctx.translate(radius + Math.cos(angle + arcSize / 2) * (radius * 0.6), radius + Math.sin(angle + arcSize / 2) * (radius * 0.6));
+                    ctx.rotate(angle + arcSize / 2 + Math.PI / 2);
+                    const text = segments[i].label.toUpperCase();
+                    ctx.fillText(text, -ctx.measureText(text).width / 2, 0);
+                    ctx.restore();
+                }
+
+                // Draw pegs
+                ctx.fillStyle = '#cbd5e1';
+                ctx.strokeStyle = '#64748b';
+                ctx.lineWidth = 2;
+                for (let i = 0; i < pegCount; i++) {
+                    const angle = (i * (2 * Math.PI)) / pegCount;
+                    const x = radius + Math.cos(angle) * (radius - pegRadius - 2);
+                    const y = radius + Math.sin(angle) * (radius - pegRadius - 2);
+                    ctx.beginPath();
+                    ctx.arc(x, y, pegRadius, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
+                }
+
+                // Draw center circle
+                ctx.beginPath();
+                ctx.arc(radius, radius, 30, 0, 2 * Math.PI);
+                ctx.fillStyle = '#e2e8f0';
+                ctx.strokeStyle = '#94a3b8';
+                ctx.lineWidth = 5;
+                ctx.fill();
+                ctx.stroke();
+            }
+
+            function spin() {
+                if (Tone.context.state !== 'running') {
+                    Tone.start();
+                }
+                spinBtn.disabled = true;
+                resultDiv.classList.add('opacity-0');
+                spinTime = 0;
+                timeElapsed = 0;
+                lastTickAngle = currentAngle;
+                spinArcStart = Math.random() * 10 + 15; // Faster start
+                spinTimeTotal = Math.random() * 3000 + 5000;
+                rotateWheel();
+            }
+
+            function rotateWheel() {
+                timeElapsed += 30;
+                if (timeElapsed >= spinTimeTotal) {
+                    stopRotateWheel();
+                    return;
+                }
+                const spinAngle = spinArcStart - easeOut(timeElapsed, 0, spinArcStart, spinTimeTotal);
+                currentAngle += (spinAngle * Math.PI / 180);
+                
+                // Play tick sound when crossing a peg
+                const pegArcSize = (2 * Math.PI) / pegCount;
+                if (Math.floor(currentAngle / pegArcSize) !== Math.floor(lastTickAngle / pegArcSize)) {
+                    playTick();
+                }
+                lastTickAngle = currentAngle;
+
+                drawWheel();
+                spinTimeout = setTimeout(rotateWheel, 30);
+            }
+
+            function stopRotateWheel() {
+                clearTimeout(spinTimeout);
+                const degrees = currentAngle * 180 / Math.PI + 90;
+                const arcd = arcSize * 180 / Math.PI;
+                const index = Math.floor((360 - degrees % 360) / arcd);
+                
+                const winner = segments[index].label;
+                const phrase = resultPhrases[Math.floor(Math.random() * resultPhrases.length)];
+                resultDiv.textContent = `${winner} ${phrase}`;
+                resultDiv.classList.remove('opacity-0');
+                
+                playWin();
+                spinBtn.disabled = false;
+            }
+
+            function easeOut(t, b, c, d) {
+                const ts = (t /= d) * t;
+                const tc = ts * t;
+                return b + c * (tc + -3 * ts + 3 * t);
+            }
+            
+            spinBtn.addEventListener('click', spin);
+
+            drawWheel();
+        }
 
         window.onload = () => {
             gsap.registerPlugin(ScrollTrigger);
@@ -655,7 +830,7 @@
                 y: 200,
                 ease: "none"
             });
-            showContent('flights');
+            showContent('map');
         };
     </script>
 </body>
