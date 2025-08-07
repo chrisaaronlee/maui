@@ -132,8 +132,19 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .font-kaushan { font-family: 'Kaushan Script', cursive; }
-        #wheelContainer { position: relative; width: 90vw; max-width: 350px; aspect-ratio: 1 / 1; margin: 1rem auto; }
-        #wheel { width: 100%; height: 100%; }
+        /* --- FIX: Changed width from 90vw to 100% for proper scaling --- */
+        #wheelContainer {
+            position: relative;
+            width: 100%;
+            max-width: 350px;
+            aspect-ratio: 1 / 1;
+            margin: 1rem auto;
+        }
+        #wheel {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
         #pointer {
             position: absolute;
             left: 50%;
@@ -177,7 +188,7 @@
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             display: flex;
             align-items: center;
-            padding: 0;
+            padding: 1rem;
             overflow: hidden;
         }
     </style>
@@ -244,7 +255,7 @@
             </nav>
 
             <main id="content-display" class="lg:w-3/4 mt-4 lg:mt-0">
-                </main>
+                 </main>
         </div>
     </div>
 
@@ -386,7 +397,7 @@
                 title: "Wednesday, Oct 15 – Departure Day",
                 items: [
                     { time: "8:00 AM", title: "Final Beach Dip", description: "One last swim at Kamaole Beach before packing up.", longDescription: "One last chance to soak up the Maui sun and enjoy the beautiful ocean before we have to leave.", icon: "🌊", search: "Kamaole Beach Park I", yUrl: "https://www.yelp.com/biz/kamaole-beach-park-i-kihei", igUrl: "https://www.instagram.com/explore/tags/kamaolebeachpark1/", ttUrl: "https://www.tiktok.com/search?q=kamaole%20beach%20park%201" },
-                    { time: "10:00 AM", title: "Final Pack & Checkout", description: "Quick rinse and head to the airport.", longDescription: "Time to pack our bags, say goodbye to the condo, and get ready to head to the airport.", icon: "짐" },
+                    { time: "10:00 AM", title: "Final Pack & Checkout", description: "Quick rinse and head to the airport.", longDescription: "Time to pack our bags, say goodbye to the condo, and get ready to head to the airport.", icon: "🧳" },
                     { time: "12:05 PM", title: "Depart OGG → LAX", description: "Mahalo, Maui! Until next time.", longDescription: "Mahalo, Maui! It's been an incredible trip. Until next time.", icon: "✈️" },
                 ]
             },
@@ -454,6 +465,7 @@
 
         let activeScrollTrigger;
         let activeObserver;
+        let gameResizeHandler = null; // To hold the resize function for the game
 
         function showContent(key) {
             if (activeScrollTrigger) {
@@ -461,6 +473,11 @@
             }
             if (activeObserver) {
                 activeObserver.disconnect();
+            }
+            // --- FIX: Clean up the game's resize listener when changing tabs ---
+            if (gameResizeHandler) {
+                window.removeEventListener('resize', gameResizeHandler);
+                gameResizeHandler = null;
             }
 
             contentDisplay.innerHTML = '';
@@ -489,12 +506,12 @@
                                     let clickableAttrs = '';
                                     if (item.search) {
                                         clickableAttrs = `
-                                            data-title="${item.title.replace(/"/g, '"')}" 
-                                            data-search="${item.search.replace(/"/g, '"')}" 
+                                            data-title="${item.title.replace(/"/g, '\"')}" 
+                                            data-search="${item.search.replace(/"/g, '\"')}" 
                                             data-yurl="${item.yUrl || ''}"
                                             data-igurl="${item.igUrl || ''}"
                                             data-tturl="${item.ttUrl || ''}"
-                                            data-description="${(item.longDescription || item.description).replace(/"/g, '"')}"
+                                            data-description="${(item.longDescription || item.description).replace(/"/g, '\"')}"
                                         `;
                                     }
                                     return `<div class="scroll-animate ${clickableClass}" ${clickableAttrs}>
@@ -510,20 +527,21 @@
                         </div>
                     </div>`;
             } else if (data.isGame) {
+                // Note: The canvas element's width/height attributes are now set in JS for responsiveness
                 contentHTML += `
                 <div class="game-container p-4 rounded-lg">
-                     <header class="text-center mb-8">
-                        <h1 class="text-4xl md:text-5xl font-black tracking-tighter uppercase">Who's Gonna Crash Out?</h1>
-                        <p class="text-lg text-blue-200 mt-2">Spin the wheel to seal your fate!</p>
-                    </header>
-                    <div id="wheelContainer">
-                        <canvas id="wheel" width="500" height="500"></canvas>
-                        <div id="pointer"></div>
-                    </div>
-                    <div class="text-center">
-                        <button id="spinBtn" class="spin-button">Spin!</button>
-                    </div>
-                    <div id="result" class="mt-6 text-2xl font-bold text-amber-300 text-center h-8 transition-opacity duration-300 opacity-0"></div>
+                     <header class="text-center mb-4 md:mb-8">
+                         <h1 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter uppercase">Who's Gonna Crash Out?</h1>
+                         <p class="text-md sm:text-lg text-blue-200 mt-2">Spin the wheel to seal your fate!</p>
+                     </header>
+                     <div id="wheelContainer">
+                         <canvas id="wheel"></canvas>
+                         <div id="pointer"></div>
+                     </div>
+                     <div class="text-center mt-4">
+                         <button id="spinBtn" class="spin-button">Spin!</button>
+                     </div>
+                     <div id="result" class="mt-6 text-xl md:text-2xl font-bold text-amber-300 text-center h-8 transition-opacity duration-300 opacity-0"></div>
                 </div>
                 `;
             } else if (key === 'packing') {
@@ -621,12 +639,12 @@
                     let clickableAttrs = '';
                     if (item.search) {
                         clickableAttrs = `
-                            data-title="${item.title.replace(/"/g, '"')}" 
-                            data-search="${item.search.replace(/"/g, '"')}" 
+                            data-title="${item.title.replace(/"/g, '\"')}" 
+                            data-search="${item.search.replace(/"/g, '\"')}" 
                             data-yurl="${item.yUrl || ''}"
                             data-igurl="${item.igUrl || ''}"
                             data-tturl="${item.ttUrl || ''}"
-                            data-description="${(item.longDescription || item.description).replace(/"/g, '"')}"
+                            data-description="${(item.longDescription || item.description).replace(/"/g, '\"')}"
                         `;
                     }
 
@@ -646,8 +664,8 @@
             contentDisplay.appendChild(card);
             
              if (data.isGame) {
-                initializeCrashOutGame();
-            }
+                 initializeCrashOutGame();
+             }
             
             const createFloatingItems = (items, className) => {
                 for (let i = 0; i < 15; i++) {
@@ -767,8 +785,12 @@
             }, 300);
         }
         
+        // --- FIX: Updated the game logic to be fully responsive ---
         function initializeCrashOutGame() {
             const canvas = document.getElementById('wheel');
+            const wheelContainer = document.getElementById('wheelContainer');
+            if (!canvas || !wheelContainer) return;
+
             const ctx = canvas.getContext('2d');
             const spinBtn = document.getElementById('spinBtn');
             const resultDiv = document.getElementById('result');
@@ -790,9 +812,7 @@
 
             const segCount = segments.length;
             const arcSize = (2 * Math.PI) / segCount;
-            const radius = canvas.width / 2;
-            const pegCount = segCount * 2; // Pegs on each segment line
-            const pegRadius = 8;
+            const pegCount = segCount * 2;
             let currentAngle = 0;
             let spinTimeout = null;
             let spinArcStart = 10;
@@ -824,6 +844,10 @@
             }
 
             function drawWheel() {
+                const radius = canvas.width / 2;
+                const pegRadius = Math.max(4, Math.floor(canvas.width / 60));
+                const fontSize = Math.max(12, Math.floor(canvas.width / 12.5));
+                
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 
                 // Draw segments
@@ -839,7 +863,7 @@
                     // Draw Text
                     ctx.save();
                     ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold 40px Inter';
+                    ctx.font = `bold ${fontSize}px Inter`;
                     ctx.textShadow = '2px 2px 2px #000';
                     ctx.translate(radius + Math.cos(angle + arcSize / 2) * (radius * 0.6), radius + Math.sin(angle + arcSize / 2) * (radius * 0.6));
                     ctx.rotate(angle + arcSize / 2 + Math.PI / 2);
@@ -864,7 +888,7 @@
 
                 // Draw center circle
                 ctx.beginPath();
-                ctx.arc(radius, radius, 30, 0, 2 * Math.PI);
+                ctx.arc(radius, radius, Math.max(15, radius / 10), 0, 2 * Math.PI);
                 ctx.fillStyle = '#e2e8f0';
                 ctx.strokeStyle = '#94a3b8';
                 ctx.lineWidth = 5;
@@ -927,9 +951,22 @@
                 return b + c * (tc + -3 * ts + 3 * t);
             }
             
+            // --- Responsive Canvas Logic ---
+            const handleResize = () => {
+                const size = wheelContainer.clientWidth;
+                if (size > 0) {
+                    canvas.width = size;
+                    canvas.height = size;
+                    drawWheel();
+                }
+            };
+            
             spinBtn.addEventListener('click', spin);
+            window.addEventListener('resize', handleResize);
+            gameResizeHandler = handleResize; // Store for cleanup
 
-            drawWheel();
+            // Initial Draw
+            handleResize();
         }
 
         window.onload = () => {
