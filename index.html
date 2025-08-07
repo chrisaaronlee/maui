@@ -53,7 +53,7 @@
             box-shadow: 0 4px 15px rgba(0, 119, 190, 0.3);
             animation: pulse 2s infinite;
         }
-        .flights-btn.active {
+        .travel-hub-btn.active {
             background-color: #0ea5e9;
         }
         .day-btn {
@@ -73,7 +73,7 @@
             z-index: 20;
             font-size: 2.5rem;
         }
-        .modal-overlay { transition: opacity 0.3s ease; }
+        .modal-overlay { transition: opacity 0.3s ease; z-index: 100; }
         .modal-content { transition: transform 0.3s ease, opacity 0.3s ease; }
         .itinerary-item-clickable { cursor: pointer; transition: background-color: 0.2s ease; }
         .itinerary-item-clickable:hover { background-color: rgba(249, 250, 251, 0.5); }
@@ -132,7 +132,7 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .font-kaushan { font-family: 'Kaushan Script', cursive; }
-        #wheelContainer { position: relative; width: 350px; height: 350px; margin: 1rem auto; }
+        #wheelContainer { position: relative; width: 90vw; max-width: 350px; aspect-ratio: 1 / 1; margin: 1rem auto; }
         #wheel { width: 100%; height: 100%; }
         #pointer {
             position: absolute;
@@ -171,6 +171,15 @@
             cursor: not-allowed;
             border-color: #6b7280;
         }
+        .key-card {
+            background: #fff;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            padding: 0;
+            overflow: hidden;
+        }
     </style>
 </head>
 <body>
@@ -189,8 +198,8 @@
                     <button onclick="showContent('map')" class="day-btn text-center flex flex-col justify-center items-center p-4 rounded-lg shadow-md hover:bg-green-100 flex-shrink-0 w-36 lg:w-full lg:text-left lg:items-start">
                          <span class="font-bold text-green-700">Map</span>
                     </button>
-                    <button onclick="showContent('flights')" class="day-btn flights-btn text-center flex flex-col justify-center items-center p-4 rounded-lg shadow-md hover:bg-sky-100 active flex-shrink-0 w-36 lg:w-full lg:text-left lg:items-start">
-                         <span class="font-bold text-sky-700">Flights</span>
+                    <button onclick="showContent('travelHub')" class="day-btn travel-hub-btn text-center flex flex-col justify-center items-center p-4 rounded-lg shadow-md hover:bg-sky-100 active flex-shrink-0 w-36 lg:w-full lg:text-left lg:items-start">
+                         <span class="font-bold text-sky-700">Travel Hub</span>
                     </button>
                     <button onclick="showContent('packing')" class="day-btn text-center flex flex-col justify-center items-center p-4 rounded-lg shadow-md hover:bg-amber-100 flex-shrink-0 w-36 lg:w-full lg:text-left lg:items-start">
                          <span class="font-bold text-amber-700">Packing List</span>
@@ -269,8 +278,24 @@
                 title: "🗺️ Trip Map",
                 isMap: true
             },
-            flights: {
-                title: "✈️ Flight Info",
+            travelHub: {
+                title: "✈️ Travel Hub",
+                bookings: [
+                    {
+                        type: "Condo",
+                        name: "Maui Vista",
+                        details: "2191 S Kihei Rd #2046, Kihei, HI 96753",
+                        confirmation: "VRBO Conf: HA-ABCD12",
+                        url: "https://www.aaoceanfront.com/vacation-rentals/maui/south-kihei/maui-vista/maui-vista-2406/"
+                    },
+                    {
+                        type: "Car Rental",
+                        name: "Alamo",
+                        details: "Jeep Wrangler Unlimited or similar",
+                        confirmation: "Confirmation: 1680372112",
+                        logo: "https://upload.wikimedia.org/wikipedia/commons/8/89/Alamo_Rent_a_Car_%28logo%29.svg"
+                    }
+                ],
                 passengers: [
                     { 
                         name: "Chris, Alex Yee, & Jade Kok",
@@ -399,7 +424,7 @@
                 items: [
                     { time: "🥇 1. Ahihi Cove – Makena", title: "“Natural aquarium” vibes", description: "Crystal-clear, protected waters. Beginner friendly, high fish density. Best in the mornings. No sandy beach (rocky entry), but the fish life and visibility are unmatched.", icon: "🌊", search: "Ahihi Kinau Natural Area Reserve" },
                     { time: "🥈 2. Ulua Beach – Wailea", title: "Easy access & balanced scenery", description: "Beginner-friendly reef close to shore. Super easy access, occasional turtles, and has showers/facilities. Best morning visibility.", icon: "🐠", search: "Ulua Beach" },
-                    { time: "🥉 3. Maluaka Beach (Turtle Town)", title: "Known for turtles", description: "Long stretch of quiet beach. Great for turtle sightings! Visibility can be hit or miss in October.", icon: "🐢", search: "Maluaka Beach" },
+                    { time: "� 3. Maluaka Beach (Turtle Town)", title: "Known for turtles", description: "Long stretch of quiet beach. Great for turtle sightings! Visibility can be hit or miss in October.", icon: "🐢", search: "Maluaka Beach" },
                     { time: "4️⃣ Honolua Bay – Northwest Maui", title: "Unreal reef", description: "Epic on calm days, but can be for advanced snorkelers if windy. Gorgeous but hard to catch in optimal conditions during October.", icon: "🌴", search: "Honolua Bay" },
                     { time: "5️⃣ Kapalua Bay – Northwest Maui", title: "Sheltered cove", description: "Great views and very beginner-friendly. Nice for lounging. Still scenic and calm, but reef isn’t as lively as other spots.", icon: "🪸", search: "Kapalua Bay" },
                 ]
@@ -501,9 +526,7 @@
                     <div id="result" class="mt-6 text-2xl font-bold text-amber-300 text-center h-8 transition-opacity duration-300 opacity-0"></div>
                 </div>
                 `;
-            }
-
-            if (key === 'packing') {
+            } else if (key === 'packing') {
                 contentHTML += '<div class="space-y-4">';
                 data.items.forEach((p, index) => {
                     const amazonUrl = `https://www.amazon.com/s?k=${encodeURIComponent(p.amazonSearchTerm)}&rh=p_76%3A1250221011`;
@@ -518,8 +541,43 @@
                     </div>`;
                 });
                 contentHTML += '</div>';
-            } else if (key === 'flights') {
-                 data.passengers.forEach(person => {
+            } else if (key === 'travelHub') {
+                 data.bookings.forEach(booking => {
+                    if (booking.type === 'Condo') {
+                        contentHTML += `
+                        <a href="${booking.url}" target="_blank" class="block ticket-link scroll-animate">
+                            <div class="key-card">
+                                <div class="p-4 bg-gray-200 rounded-full mr-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">${booking.type}</p>
+                                    <p class="font-bold text-lg text-gray-800">${booking.name}</p>
+                                    <p class="text-gray-600">${booking.details}</p>
+                                    <p class="text-sm text-gray-500 mt-2">${booking.confirmation}</p>
+                                </div>
+                            </div>
+                        </a>`;
+                    } else {
+                        contentHTML += `
+                        <div class="ticket scroll-animate">
+                            <div class="ticket-main">
+                                <div class="flex justify-between items-center mb-4">
+                                    <div>
+                                        <p class="text-sm text-gray-500">${booking.type}</p>
+                                        <p class="font-bold text-lg text-gray-800">${booking.name}</p>
+                                    </div>
+                                    <img src="${booking.logo}" alt="${booking.name} Logo" class="h-8">
+                                </div>
+                                <p class="text-gray-600">${booking.details}</p>
+                                <p class="text-sm text-gray-500 mt-2">${booking.confirmation}</p>
+                            </div>
+                        </div>`;
+                    }
+                });
+                data.passengers.forEach(person => {
                     contentHTML += `<h3 class="text-2xl font-bold text-gray-800 mb-4 mt-6 scroll-animate">${person.name}</h3>`;
                     person.flights.forEach(flight => {
                         contentHTML += `
@@ -891,3 +949,4 @@
     </script>
 </body>
 </html>
+�
