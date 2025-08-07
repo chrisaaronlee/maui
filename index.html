@@ -132,11 +132,11 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .font-kaushan { font-family: 'Kaushan Script', cursive; }
-        /* --- FIX: Changed width from 90vw to 100% for proper scaling --- */
         #wheelContainer {
             position: relative;
             width: 100%;
-            max-width: 350px;
+            /* --- FIX: Reduced max-width to better fit small screens --- */
+            max-width: 280px;
             aspect-ratio: 1 / 1;
             margin: 1rem auto;
         }
