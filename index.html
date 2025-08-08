@@ -135,7 +135,6 @@
         #wheelContainer {
             position: relative;
             width: 100%;
-            /* --- FIX: Reduced max-width to better fit small screens --- */
             max-width: 280px;
             aspect-ratio: 1 / 1;
             margin: 1rem auto;
@@ -144,6 +143,24 @@
             width: 100%;
             height: 100%;
             display: block;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,0,0,0.3);
+        }
+        #lights {
+            position: absolute;
+            top: -5%;
+            left: -5%;
+            width: 110%;
+            height: 110%;
+            pointer-events: none;
+        }
+        .light {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #fff, 0 0 20px #ffdd87;
         }
         #pointer {
             position: absolute;
@@ -158,6 +175,7 @@
             border: 3px solid white;
             box-shadow: 0 0 10px rgba(0,0,0,0.5);
             z-index: 10;
+            transform-origin: center bottom;
         }
         .spin-button {
             background-color: #22c55e;
@@ -183,13 +201,65 @@
             border-color: #6b7280;
         }
         .key-card {
-            background: #fff;
+            background: #fdfbf4; /* Creamy white */
             border-radius: 0.75rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: flex;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        .key-card-left {
+            background: #0077be; /* A nice blue */
+            color: white;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            width: 5rem;
+            text-align: center;
+        }
+        .key-card-logo {
+            font-weight: 900;
+            font-size: 1.5rem;
+            border: 2px solid white;
+            border-radius: 50%;
+            width: 3rem;
+            height: 3rem;
             display: flex;
             align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+        .key-card-hotel {
+            font-size: 0.65rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+        }
+        .key-card-hole {
+            width: 1rem;
+            height: 1rem;
+            background: #fdfbf4;
+            border-radius: 50%;
+            margin-top: 1rem;
+        }
+        .key-card-right {
             padding: 1rem;
-            overflow: hidden;
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .key-card-strip {
+            position: absolute;
+            bottom: 1rem;
+            left: 0;
+            right: 0;
+            height: 1.25rem;
+            background: #333;
         }
     </style>
 </head>
@@ -255,7 +325,7 @@
             </nav>
 
             <main id="content-display" class="lg:w-3/4 mt-4 lg:mt-0">
-                 </main>
+             </main>
         </div>
     </div>
 
@@ -474,7 +544,6 @@
             if (activeObserver) {
                 activeObserver.disconnect();
             }
-            // --- FIX: Clean up the game's resize listener when changing tabs ---
             if (gameResizeHandler) {
                 window.removeEventListener('resize', gameResizeHandler);
                 gameResizeHandler = null;
@@ -527,7 +596,6 @@
                         </div>
                     </div>`;
             } else if (data.isGame) {
-                // Note: The canvas element's width/height attributes are now set in JS for responsiveness
                 contentHTML += `
                 <div class="game-container p-4 rounded-lg">
                      <header class="text-center mb-4 md:mb-8">
@@ -535,13 +603,14 @@
                          <p class="text-md sm:text-lg text-blue-200 mt-2">Spin the wheel to seal your fate!</p>
                      </header>
                      <div id="wheelContainer">
+                         <div id="lights"></div>
                          <canvas id="wheel"></canvas>
                          <div id="pointer"></div>
                      </div>
                      <div class="text-center mt-4">
                          <button id="spinBtn" class="spin-button">Spin!</button>
                      </div>
-                     <div id="result" class="mt-6 text-xl md:text-2xl font-bold text-amber-300 text-center h-8 transition-opacity duration-300 opacity-0"></div>
+                     <div id="result" class="mt-6 text-xl md:text-2xl font-bold text-amber-300 text-center h-8"></div>
                 </div>
                 `;
             } else if (key === 'packing') {
@@ -561,76 +630,76 @@
                 contentHTML += '</div>';
             } else if (key === 'travelHub') {
                  data.bookings.forEach(booking => {
-                    if (booking.type === 'Condo') {
-                        contentHTML += `
-                        <a href="${booking.url}" target="_blank" class="block ticket-link scroll-animate">
+                     if (booking.type === 'Condo') {
+                         contentHTML += `
+                         <a href="${booking.url}" target="_blank" class="block ticket-link scroll-animate mb-6">
                             <div class="key-card">
-                                <div class="p-4 bg-gray-200 rounded-full mr-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-                                    </svg>
+                                <div class="key-card-left">
+                                    <div class="key-card-logo">MV</div>
+                                    <p class="key-card-hotel">Maui Vista</p>
+                                    <div class="key-card-hole"></div>
                                 </div>
-                                <div>
-                                    <p class="text-sm text-gray-500">${booking.type}</p>
+                                <div class="key-card-right">
                                     <p class="font-bold text-lg text-gray-800">${booking.name}</p>
-                                    <p class="text-gray-600">${booking.details}</p>
-                                    <p class="text-sm text-gray-500 mt-2">${booking.confirmation}</p>
+                                    <p class="text-gray-600 text-sm">${booking.details}</p>
+                                    <p class="text-xs text-gray-500 mt-2">${booking.confirmation}</p>
+                                    <div class="key-card-strip"></div>
                                 </div>
                             </div>
                         </a>`;
-                    } else {
-                        contentHTML += `
-                        <div class="ticket scroll-animate">
-                            <div class="ticket-main">
-                                <div class="flex justify-between items-center mb-4">
-                                    <div>
-                                        <p class="text-sm text-gray-500">${booking.type}</p>
-                                        <p class="font-bold text-lg text-gray-800">${booking.name}</p>
-                                    </div>
-                                    <img src="${booking.logo}" alt="${booking.name} Logo" class="h-8">
-                                </div>
-                                <p class="text-gray-600">${booking.details}</p>
-                                <p class="text-sm text-gray-500 mt-2">${booking.confirmation}</p>
-                            </div>
-                        </div>`;
-                    }
-                });
-                data.passengers.forEach(person => {
-                    contentHTML += `<h3 class="text-2xl font-bold text-gray-800 mb-4 mt-6 scroll-animate">${person.name}</h3>`;
-                    person.flights.forEach(flight => {
-                        contentHTML += `
-                        <a href="https://www.google.com/search?q=${flight.airline} ${flight.flightNum}" target="_blank" class="block ticket-link scroll-animate">
-                            <div class="ticket">
-                                <div class="ticket-main">
-                                    <div class="flex justify-between items-center mb-4">
-                                        <div>
-                                            <p class="text-sm sm:text-base text-gray-500">${flight.type}</p>
-                                            <p class="font-bold text-base sm:text-lg text-gray-800">${flight.airline}</p>
-                                        </div>
-                                        <img src="${flight.logo}" alt="${flight.airline} Logo" class="airline-logo">
-                                    </div>
-                                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end space-y-4 sm:space-y-0">
-                                        <div>
-                                            <p class="text-xs sm:text-sm text-gray-500">From</p>
-                                            <p class="text-2xl sm:text-3xl font-bold text-gray-900">${flight.from}</p>
-                                            <p class="text-xs sm:text-sm text-gray-600">${flight.departure}</p>
-                                        </div>
-                                        <div class="text-center text-gray-400 hidden sm:block">✈️</div>
-                                        <div class="text-left sm:text-right">
-                                            <p class="text-xs sm:text-sm text-gray-500">To</p>
-                                            <p class="text-2xl sm:text-3xl font-bold text-gray-900">${flight.to}</p>
-                                            <p class="text-xs sm:text-sm text-gray-600">${flight.arrival}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="ticket-rip bg-gray-50 flex flex-col justify-center items-center">
-                                    <p class="text-xs text-gray-500 transform -rotate-90 whitespace-nowrap">Flight ${flight.flightNum}</p>
-                                </div>
-                            </div>
-                        </a>
-                        `;
-                    });
-                });
+                     } else {
+                         contentHTML += `
+                         <div class="ticket scroll-animate">
+                             <div class="ticket-main">
+                                 <div class="flex justify-between items-center mb-4">
+                                     <div>
+                                         <p class="text-sm text-gray-500">${booking.type}</p>
+                                         <p class="font-bold text-lg text-gray-800">${booking.name}</p>
+                                     </div>
+                                     <img src="${booking.logo}" alt="${booking.name} Logo" class="h-8">
+                                 </div>
+                                 <p class="text-gray-600">${booking.details}</p>
+                                 <p class="text-sm text-gray-500 mt-2">${booking.confirmation}</p>
+                             </div>
+                         </div>`;
+                     }
+                 });
+                 data.passengers.forEach(person => {
+                     contentHTML += `<h3 class="text-2xl font-bold text-gray-800 mb-4 mt-6 scroll-animate">${person.name}</h3>`;
+                     person.flights.forEach(flight => {
+                         contentHTML += `
+                         <a href="https://www.google.com/search?q=${flight.airline} ${flight.flightNum}" target="_blank" class="block ticket-link scroll-animate">
+                             <div class="ticket">
+                                 <div class="ticket-main">
+                                     <div class="flex justify-between items-center mb-4">
+                                         <div>
+                                             <p class="text-sm sm:text-base text-gray-500">${flight.type}</p>
+                                             <p class="font-bold text-base sm:text-lg text-gray-800">${flight.airline}</p>
+                                         </div>
+                                         <img src="${flight.logo}" alt="${flight.airline} Logo" class="airline-logo">
+                                     </div>
+                                     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end space-y-4 sm:space-y-0">
+                                         <div>
+                                             <p class="text-xs sm:text-sm text-gray-500">From</p>
+                                             <p class="text-2xl sm:text-3xl font-bold text-gray-900">${flight.from}</p>
+                                             <p class="text-xs sm:text-sm text-gray-600">${flight.departure}</p>
+                                         </div>
+                                         <div class="text-center text-gray-400 hidden sm:block">✈️</div>
+                                         <div class="text-left sm:text-right">
+                                             <p class="text-xs sm:text-sm text-gray-500">To</p>
+                                             <p class="text-2xl sm:text-3xl font-bold text-gray-900">${flight.to}</p>
+                                             <p class="text-xs sm:text-sm text-gray-600">${flight.arrival}</p>
+                                         </div>
+                                     </div>
+                                 </div>
+                                 <div class="ticket-rip bg-gray-50 flex flex-col justify-center items-center">
+                                     <p class="text-xs text-gray-500 transform -rotate-90 whitespace-nowrap">Flight ${flight.flightNum}</p>
+                                 </div>
+                             </div>
+                         </a>
+                         `;
+                     });
+                 });
             } else if (data.items) {
                 contentHTML += '<div class="space-y-2">';
                 data.items.forEach(item => {
@@ -785,7 +854,6 @@
             }, 300);
         }
         
-        // --- FIX: Updated the game logic to be fully responsive ---
         function initializeCrashOutGame() {
             const canvas = document.getElementById('wheel');
             const wheelContainer = document.getElementById('wheelContainer');
@@ -794,6 +862,8 @@
             const ctx = canvas.getContext('2d');
             const spinBtn = document.getElementById('spinBtn');
             const resultDiv = document.getElementById('result');
+            const pointer = document.getElementById('pointer');
+            const lightsContainer = document.getElementById('lights');
 
             const segments = [
                 { color: '#ec4899', label: 'Chris' }, // Pink
@@ -811,88 +881,117 @@
             ];
 
             const segCount = segments.length;
-            const arcSize = (2 * Math.PI) / segCount;
-            const pegCount = segCount * 2;
-            let currentAngle = 0;
-            let spinTimeout = null;
-            let spinArcStart = 10;
-            let spinTime = 0;
-            let timeElapsed = 0;
-            let spinTimeTotal = 0;
-            let lastTickAngle = 0;
+            const arcSize = 360 / segCount;
+            const pegCount = segCount * 4; // More pegs for more clicks
+            let lightsTimeline;
 
-            // --- Tone.js Sound Setup ---
+            // --- Sound Setup ---
             const tickSynth = new Tone.Synth({
                 oscillator: { type: 'sine', frequency: 440 },
-                envelope: { attack: 0.01, decay: 0.05, sustain: 0, release: 0.1 }
+                envelope: { attack: 0.005, decay: 0.05, sustain: 0, release: 0.1 }
             }).toDestination();
             
-            const winSynth = new Tone.Synth({
-                oscillator: { type: 'triangle' },
-                envelope: { attack: 0.005, decay: 0.2, sustain: 0, release: 0.2 }
+            const winSynth = new Tone.PluckSynth({
+                attackNoise: 1,
+                dampening: 4000,
+                resonance: 0.7
             }).toDestination();
 
             function playTick() {
                 if (Tone.context.state !== 'running') return;
                 tickSynth.triggerAttackRelease('C5', '32n');
+                gsap.fromTo(pointer, {rotate: 0}, {rotate: (Math.random() > 0.5 ? 1 : -1) * 15, duration: 0.05, ease: 'power2.out', yoyo: true, repeat: 1});
             }
             
             function playWin() {
                 if (Tone.context.state !== 'running') return;
-                winSynth.triggerAttackRelease('G5', '8n', Tone.now());
-                winSynth.triggerAttackRelease('C6', '8n', Tone.now() + 0.1);
+                const notes = ['G4', 'A4', 'C5', 'E5'];
+                const now = Tone.now();
+                notes.forEach((note, i) => {
+                    winSynth.triggerAttackRelease(note, '8n', now + i * 0.1);
+                });
+            }
+            
+            // --- Create Lights ---
+            const numLights = 16;
+            const lights = [];
+            for (let i = 0; i < numLights; i++) {
+                const light = document.createElement('div');
+                light.className = 'light';
+                lightsContainer.appendChild(light);
+                lights.push(light);
             }
 
             function drawWheel() {
                 const radius = canvas.width / 2;
-                const pegRadius = Math.max(4, Math.floor(canvas.width / 60));
-                const fontSize = Math.max(12, Math.floor(canvas.width / 12.5));
+                const pegRadius = Math.max(3, Math.floor(canvas.width / 80));
+                const fontSize = Math.max(12, Math.floor(canvas.width / 13));
                 
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 
-                // Draw segments
-                for (let i = 0; i < segCount; i++) {
-                    const angle = currentAngle + i * arcSize;
-                    ctx.fillStyle = segments[i].color;
-
+                segments.forEach((segment, i) => {
+                    const startAngle = i * arcSize;
+                    const endAngle = startAngle + arcSize;
+                    
+                    // Draw the segment wedge
+                    ctx.fillStyle = segment.color;
                     ctx.beginPath();
-                    ctx.arc(radius, radius, radius - pegRadius - 5, angle, angle + arcSize, false);
-                    ctx.arc(radius, radius, 0, angle + arcSize, angle, true);
+                    ctx.moveTo(radius, radius);
+                    ctx.arc(radius, radius, radius - pegRadius - 5, startAngle * Math.PI / 180, endAngle * Math.PI / 180);
+                    ctx.closePath();
                     ctx.fill();
 
-                    // Draw Text
+                    // --- NEW AND IMPROVED TEXT LOGIC ---
                     ctx.save();
+                    ctx.translate(radius, radius); // Move to center
+                    
+                    // Angle for the middle of the segment + 90 degrees for readability
+                    const textAngle = (startAngle + arcSize / 2 + 90) * Math.PI / 180;
+                    ctx.rotate(textAngle);
+                    
                     ctx.fillStyle = '#ffffff';
-                    ctx.font = `bold ${fontSize}px Inter`;
-                    ctx.textShadow = '2px 2px 2px #000';
-                    ctx.translate(radius + Math.cos(angle + arcSize / 2) * (radius * 0.6), radius + Math.sin(angle + arcSize / 2) * (radius * 0.6));
-                    ctx.rotate(angle + arcSize / 2 + Math.PI / 2);
-                    const text = segments[i].label.toUpperCase();
-                    ctx.fillText(text, -ctx.measureText(text).width / 2, 0);
+                    ctx.font = `900 ${fontSize}px Inter, sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+                    ctx.shadowBlur = 4;
+                    ctx.shadowOffsetX = 2;
+                    ctx.shadowOffsetY = 2;
+                    
+                    const text = segment.label.toUpperCase();
+                    // We draw at a negative Y position because of the 90-degree rotation
+                    ctx.fillText(text, 0, -radius * 0.6); 
+                    
                     ctx.restore();
-                }
+                });
+
 
                 // Draw pegs
-                ctx.fillStyle = '#cbd5e1';
-                ctx.strokeStyle = '#64748b';
-                ctx.lineWidth = 2;
                 for (let i = 0; i < pegCount; i++) {
-                    const angle = (i * (2 * Math.PI)) / pegCount;
-                    const x = radius + Math.cos(angle) * (radius - pegRadius - 2);
-                    const y = radius + Math.sin(angle) * (radius - pegRadius - 2);
+                    const angle = (i / pegCount) * 360;
+                    const x = radius + Math.cos(angle * Math.PI / 180) * (radius - pegRadius - 2);
+                    const y = radius + Math.sin(angle * Math.PI / 180) * (radius - pegRadius - 2);
                     ctx.beginPath();
                     ctx.arc(x, y, pegRadius, 0, 2 * Math.PI);
+                    
+                    const grad = ctx.createRadialGradient(x-1, y-1, 0, x, y, pegRadius);
+                    grad.addColorStop(0, '#fff');
+                    grad.addColorStop(0.5, '#cbd5e1');
+                    grad.addColorStop(1, '#64748b');
+                    ctx.fillStyle = grad;
                     ctx.fill();
-                    ctx.stroke();
                 }
 
                 // Draw center circle
                 ctx.beginPath();
                 ctx.arc(radius, radius, Math.max(15, radius / 10), 0, 2 * Math.PI);
-                ctx.fillStyle = '#e2e8f0';
-                ctx.strokeStyle = '#94a3b8';
-                ctx.lineWidth = 5;
+                const centerGrad = ctx.createRadialGradient(radius-5, radius-5, 1, radius, radius, radius/10);
+                centerGrad.addColorStop(0, '#fff');
+                centerGrad.addColorStop(1, '#94a3b8');
+                ctx.fillStyle = centerGrad;
                 ctx.fill();
+                ctx.strokeStyle = '#64748b';
+                ctx.lineWidth = 2;
                 ctx.stroke();
             }
 
@@ -901,71 +1000,116 @@
                     Tone.start();
                 }
                 spinBtn.disabled = true;
-                resultDiv.classList.add('opacity-0');
-                spinTime = 0;
-                timeElapsed = 0;
-                lastTickAngle = currentAngle;
-                spinArcStart = Math.random() * 10 + 15; // Faster start
-                spinTimeTotal = Math.random() * 3000 + 5000;
-                rotateWheel();
-            }
+                gsap.set(resultDiv, { textContent: '', scale: 0, opacity: 0 });
 
-            function rotateWheel() {
-                timeElapsed += 30;
-                if (timeElapsed >= spinTimeTotal) {
-                    stopRotateWheel();
-                    return;
-                }
-                const spinAngle = spinArcStart - easeOut(timeElapsed, 0, spinArcStart, spinTimeTotal);
-                currentAngle += (spinAngle * Math.PI / 180);
+                const randomSpins = gsap.utils.random(5, 10);
+                const randomAngle = gsap.utils.random(0, 360);
+                const targetRotation = randomSpins * 360 + randomAngle;
                 
-                // Play tick sound when crossing a peg
-                const pegArcSize = (2 * Math.PI) / pegCount;
-                if (Math.floor(currentAngle / pegArcSize) !== Math.floor(lastTickAngle / pegArcSize)) {
-                    playTick();
-                }
-                lastTickAngle = currentAngle;
+                let lastPeg = 0;
 
-                drawWheel();
-                spinTimeout = setTimeout(rotateWheel, 30);
-            }
+                // Lights animation during spin
+                if (lightsTimeline) lightsTimeline.kill();
+                lightsTimeline = gsap.to(lights, {
+                    scale: 1.5,
+                    opacity: 0.5,
+                    duration: 0.1,
+                    stagger: {
+                        each: 0.05,
+                        repeat: -1,
+                        yoyo: true
+                    },
+                    ease: 'power1.inOut'
+                });
 
-            function stopRotateWheel() {
-                clearTimeout(spinTimeout);
-                const degrees = currentAngle * 180 / Math.PI + 90;
-                const arcd = arcSize * 180 / Math.PI;
-                const index = Math.floor((360 - degrees % 360) / arcd);
-                
-                const winner = segments[index].label;
-                const phrase = resultPhrases[Math.floor(Math.random() * resultPhrases.length)];
-                resultDiv.textContent = `${winner} ${phrase}`;
-                resultDiv.classList.remove('opacity-0');
-                
-                playWin();
-                spinBtn.disabled = false;
-            }
-
-            function easeOut(t, b, c, d) {
-                const ts = (t /= d) * t;
-                const tc = ts * t;
-                return b + c * (tc + -3 * ts + 3 * t);
+                gsap.to(canvas, {
+                    rotation: `+=${targetRotation}`,
+                    duration: gsap.utils.random(4, 6),
+                    ease: 'power2.out',
+                    onUpdate: function() {
+                        const currentPeg = Math.floor(this.ratio * pegCount * (targetRotation/360));
+                        if (currentPeg > lastPeg) {
+                            playTick();
+                            lastPeg = currentPeg;
+                        }
+                    },
+                    onComplete: onSpinComplete
+                });
             }
             
-            // --- Responsive Canvas Logic ---
+            function onSpinComplete() {
+                const finalRotation = gsap.getProperty(canvas, "rotation") % 360;
+                const normalizedAngle = gsap.utils.wrap(0, 360)(270 - finalRotation); // 270 is top
+                const winnerIndex = Math.floor(normalizedAngle / arcSize);
+                const winner = segments[winnerIndex];
+
+                // Stop lights animation
+                lightsTimeline.kill();
+                gsap.to(lights, { scale: 1, opacity: 1, duration: 0.2 });
+
+                // Winner animation
+                const winnerTl = gsap.timeline({
+                    onComplete: () => { spinBtn.disabled = false; }
+                });
+                
+                winnerTl.to(lights, { // Winner lights
+                    opacity: 0,
+                    scale: 2,
+                    duration: 0.3,
+                    stagger: {
+                        each: 0.05,
+                        from: "center"
+                    }
+                }).to(lights, {
+                    opacity: 1,
+                    scale: 1,
+                    duration: 0.3,
+                    stagger: {
+                        each: 0.05,
+                        from: "center"
+                    }
+                }, "-=0.1").to(pointer, { // Pointer wobble
+                    rotate: -15,
+                    duration: 0.1,
+                    ease: 'power2.inOut',
+                    repeat: 3,
+                    yoyo: true
+                }, 0).call(playWin, [], 0.1)
+                .to(resultDiv, { // Show result text
+                    textContent: `${winner.label} ${resultPhrases[Math.floor(Math.random() * resultPhrases.length)]}`,
+                    scale: 1,
+                    opacity: 1,
+                    duration: 0.5,
+                    ease: 'back.out(1.7)'
+                }, 0.5);
+            }
+
             const handleResize = () => {
                 const size = wheelContainer.clientWidth;
                 if (size > 0) {
                     canvas.width = size;
                     canvas.height = size;
                     drawWheel();
+                    
+                    const lightsRadius = lightsContainer.clientWidth / 2;
+                    lights.forEach((light, i) => {
+                        const angle = (i / numLights) * (2 * Math.PI); // Radians
+                        const x = lightsRadius + lightsRadius * Math.cos(angle);
+                        const y = lightsRadius + lightsRadius * Math.sin(angle);
+                        gsap.set(light, {
+                            left: x,
+                            top: y,
+                            xPercent: -50,
+                            yPercent: -50,
+                        });
+                    });
                 }
             };
             
             spinBtn.addEventListener('click', spin);
             window.addEventListener('resize', handleResize);
-            gameResizeHandler = handleResize; // Store for cleanup
+            gameResizeHandler = handleResize;
 
-            // Initial Draw
             handleResize();
         }
 
@@ -981,7 +1125,7 @@
                 y: 200,
                 ease: "none"
             });
-            showContent('map');
+            showContent('crashOutGame'); // Default view
         };
     </script>
 </body>
