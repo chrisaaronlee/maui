@@ -645,6 +645,9 @@
         let currentContentKey = 'travelHub'; 
 
         function showContent(key) {
+            // UX IMPROVEMENT: Check if nav is locked before changing content
+            const navWasLocked = window.scrollY > 30;
+            
             scrollPositions[currentContentKey] = window.scrollY;
 
             if (activeScrollTrigger) activeScrollTrigger.kill();
@@ -918,7 +921,17 @@
                 });
                 
                 setTimeout(() => {
-                    window.scrollTo(0, scrollPositions[key] || 0);
+                    // UX IMPROVEMENT: Logic to keep nav locked
+                    let newScrollPosition;
+                    if (navWasLocked) {
+                        // If the nav was locked, scroll just enough to keep it locked on the new page
+                        newScrollPosition = 31;
+                    } else {
+                        // Otherwise, use the saved position for this page, or go to the top
+                        newScrollPosition = scrollPositions[key] || 0;
+                    }
+                    window.scrollTo(0, newScrollPosition);
+
                     card.style.opacity = '1';
                 }, 50);
 
