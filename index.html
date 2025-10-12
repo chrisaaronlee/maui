@@ -821,9 +821,10 @@
                 } else if (key === 'travelHub') {
                     data.bookings.forEach(booking => {
                         if (booking.type === 'Condo') {
+                            const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(booking.address)}`;
                             contentHTML += `
                             <div class="scroll-animate mb-6">
-                                <a href="${booking.url}" target="_blank" class="block ticket-link">
+                                <a href="${mapsUrl}" target="_blank" class="block ticket-link">
                                     <div class="key-card">
                                         <div class="key-card-left">
                                             <div class="key-card-logo">MV</div>
@@ -1273,7 +1274,9 @@
 
         function updateUpNext() {
             const upNextWidget = document.getElementById('nav-up-next-widget');
-            const now = new Date('2025-10-08T11:00:00-10:00');
+            // On a live site, you would use `const now = new Date();`
+            // For demonstration, we are using a fixed date within the trip.
+            const now = new Date('2025-10-11T16:07:00-10:00');
             const dayKeyMap = { 8: 'day8', 9: 'day9', 10: 'day10', 11: 'day11', 12: 'day12', 13: 'day13', 14: 'day14', 15: 'day15' };
             const currentDayKey = dayKeyMap[now.getDate()];
 
@@ -1357,4 +1360,5 @@
     </script>
 </body>
 </html>
+
 
